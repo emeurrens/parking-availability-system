@@ -1,0 +1,1 @@
+This folder will be used to establish the preliminary connection from the raspberry pi to the AWS S3 instance. Once this is done the code/files in the folder can be migrated appropriately.
