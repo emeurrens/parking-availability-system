@@ -1,0 +1,294 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.example.uf_parking_map"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+9        android:targetSdkVersion="31" />
+10    <!--
+11         The INTERNET permission is required for development. Specifically,
+12         the Flutter tool needs it to communicate with the running application
+13         to allow setting breakpoints, to provide hot reload, etc.
+14    -->
+15    <uses-permission android:name="android.permission.INTERNET" />
+15-->C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\android\app\src\debug\AndroidManifest.xml:7:5-66
+15-->C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\android\app\src\debug\AndroidManifest.xml:7:22-64
+16    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+16-->C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\android\app\src\main\AndroidManifest.xml:36:5-79
+16-->C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\android\app\src\main\AndroidManifest.xml:36:22-76
+17    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+17-->C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\android\app\src\main\AndroidManifest.xml:37:5-85
+17-->C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\android\app\src\main\AndroidManifest.xml:37:22-82
+18    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+18-->[:geolocator_android] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\geolocator_android\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-77
+18-->[:geolocator_android] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\geolocator_android\intermediates\merged_manifest\debug\AndroidManifest.xml:9:22-74
+19    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+19-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:24:5-79
+19-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:24:22-76
+20
+21    <uses-feature
+21-->[com.google.android.gms:play-services-maps:18.1.0] C:\Users\fenci\.gradle\caches\transforms-3\d5e4c04f4690837574f4fd959dc722b7\transformed\jetified-play-services-maps-18.1.0\AndroidManifest.xml:26:5-28:35
+22        android:glEsVersion="0x00020000"
+22-->[com.google.android.gms:play-services-maps:18.1.0] C:\Users\fenci\.gradle\caches\transforms-3\d5e4c04f4690837574f4fd959dc722b7\transformed\jetified-play-services-maps-18.1.0\AndroidManifest.xml:27:9-41
+23        android:required="true" />
+23-->[com.google.android.gms:play-services-maps:18.1.0] C:\Users\fenci\.gradle\caches\transforms-3\d5e4c04f4690837574f4fd959dc722b7\transformed\jetified-play-services-maps-18.1.0\AndroidManifest.xml:28:9-32
+24
+25    <queries>
+25-->[com.google.android.gms:play-services-maps:18.1.0] C:\Users\fenci\.gradle\caches\transforms-3\d5e4c04f4690837574f4fd959dc722b7\transformed\jetified-play-services-maps-18.1.0\AndroidManifest.xml:30:5-34:15
+26
+27        <!-- Needs to be explicitly declared on Android R+ -->
+28        <package android:name="com.google.android.apps.maps" />
+28-->[com.google.android.gms:play-services-maps:18.1.0] C:\Users\fenci\.gradle\caches\transforms-3\d5e4c04f4690837574f4fd959dc722b7\transformed\jetified-play-services-maps-18.1.0\AndroidManifest.xml:33:9-64
+28-->[com.google.android.gms:play-services-maps:18.1.0] C:\Users\fenci\.gradle\caches\transforms-3\d5e4c04f4690837574f4fd959dc722b7\transformed\jetified-play-services-maps-18.1.0\AndroidManifest.xml:33:18-61
+29    </queries>
+30
+31    <application
+32        android:name="android.app.Application"
+33        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+33-->[androidx.core:core:1.8.0] C:\Users\fenci\.gradle\caches\transforms-3\0ce731f8c62e88af9af421907435d7da\transformed\core-1.8.0\AndroidManifest.xml:24:18-86
+34        android:debuggable="true"
+35        android:icon="@mipmap/ic_launcher"
+36        android:label="parkings_" >
+37        <activity
+38            android:name="com.example.parkings_.MainActivity"
+39            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+40            android:exported="true"
+41            android:hardwareAccelerated="true"
+42            android:launchMode="singleTop"
+43            android:theme="@style/LaunchTheme"
+44            android:windowSoftInputMode="adjustResize" >
+45
+46            <!--
+47                 Specifies an Android theme to apply to this Activity as soon as
+48                 the Android process has started. This theme is visible to the user
+49                 while the Flutter UI initializes. After that, this theme continues
+50                 to determine the Window background behind the Flutter UI.
+51            -->
+52            <meta-data
+53                android:name="io.flutter.embedding.android.NormalTheme"
+54                android:resource="@style/NormalTheme" />
+55
+56            <intent-filter>
+57                <action android:name="android.intent.action.MAIN" />
+58
+59                <category android:name="android.intent.category.LAUNCHER" />
+60            </intent-filter>
+61        </activity>
+62        <!--
+63             Don't delete the meta-data below.
+64             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java
+65        -->
+66        <meta-data
+67            android:name="flutterEmbedding"
+68            android:value="2" />
+69        <meta-data
+70            android:name="com.google.android.geo.API_KEY"
+71            android:value="AIzaSyB4ce4ZUmcoBgfiO7RkeGCXXMgDmFxHxJA" />
+72
+73        <service
+73-->[:firebase_auth] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\firebase_auth\intermediates\merged_manifest\debug\AndroidManifest.xml:10:9-14:19
+74            android:name="com.google.firebase.components.ComponentDiscoveryService"
+74-->[:firebase_auth] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\firebase_auth\intermediates\merged_manifest\debug\AndroidManifest.xml:10:18-89
+75            android:directBootAware="true"
+75-->[com.google.firebase:firebase-common:20.2.0] C:\Users\fenci\.gradle\caches\transforms-3\c1f7cd0e68ddf89c76a753ac7fd1a66c\transformed\jetified-firebase-common-20.2.0\AndroidManifest.xml:34:13-43
+76            android:exported="false" >
+76-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:66:13-37
+77            <meta-data
+77-->[:firebase_auth] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\firebase_auth\intermediates\merged_manifest\debug\AndroidManifest.xml:11:13-13:85
+78                android:name="com.google.firebase.components:io.flutter.plugins.firebase.auth.FlutterFirebaseAuthRegistrar"
+78-->[:firebase_auth] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\firebase_auth\intermediates\merged_manifest\debug\AndroidManifest.xml:12:17-124
+79                android:value="com.google.firebase.components.ComponentRegistrar" />
+79-->[:firebase_auth] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\firebase_auth\intermediates\merged_manifest\debug\AndroidManifest.xml:13:17-82
+80            <meta-data
+80-->[:firebase_database] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\firebase_database\intermediates\merged_manifest\debug\AndroidManifest.xml:11:13-13:85
+81                android:name="com.google.firebase.components:io.flutter.plugins.firebase.database.FlutterFirebaseAppRegistrar"
+81-->[:firebase_database] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\firebase_database\intermediates\merged_manifest\debug\AndroidManifest.xml:12:17-127
+82                android:value="com.google.firebase.components.ComponentRegistrar" />
+82-->[:firebase_database] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\firebase_database\intermediates\merged_manifest\debug\AndroidManifest.xml:13:17-82
+83            <meta-data
+83-->[:firebase_core] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\firebase_core\intermediates\merged_manifest\debug\AndroidManifest.xml:11:13-13:85
+84                android:name="com.google.firebase.components:io.flutter.plugins.firebase.core.FlutterFirebaseCoreRegistrar"
+84-->[:firebase_core] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\firebase_core\intermediates\merged_manifest\debug\AndroidManifest.xml:12:17-124
+85                android:value="com.google.firebase.components.ComponentRegistrar" />
+85-->[:firebase_core] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\firebase_core\intermediates\merged_manifest\debug\AndroidManifest.xml:13:17-82
+86            <meta-data
+86-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:67:13-69:85
+87                android:name="com.google.firebase.components:com.google.firebase.auth.FirebaseAuthRegistrar"
+87-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:68:17-109
+88                android:value="com.google.firebase.components.ComponentRegistrar" />
+88-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:69:17-82
+89            <meta-data
+89-->[com.google.firebase:firebase-database:20.1.0] C:\Users\fenci\.gradle\caches\transforms-3\213a1dfac06a559ac66124b026fba95a\transformed\jetified-firebase-database-20.1.0\AndroidManifest.xml:31:13-33:85
+90                android:name="com.google.firebase.components:com.google.firebase.database.DatabaseRegistrar"
+90-->[com.google.firebase:firebase-database:20.1.0] C:\Users\fenci\.gradle\caches\transforms-3\213a1dfac06a559ac66124b026fba95a\transformed\jetified-firebase-database-20.1.0\AndroidManifest.xml:32:17-109
+91                android:value="com.google.firebase.components.ComponentRegistrar" />
+91-->[com.google.firebase:firebase-database:20.1.0] C:\Users\fenci\.gradle\caches\transforms-3\213a1dfac06a559ac66124b026fba95a\transformed\jetified-firebase-database-20.1.0\AndroidManifest.xml:33:17-82
+92        </service>
+93        <service
+93-->[:geolocator_android] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\geolocator_android\intermediates\merged_manifest\debug\AndroidManifest.xml:12:9-16:56
+94            android:name="com.baseflow.geolocator.GeolocatorLocationService"
+94-->[:geolocator_android] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\geolocator_android\intermediates\merged_manifest\debug\AndroidManifest.xml:13:13-77
+95            android:enabled="true"
+95-->[:geolocator_android] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\geolocator_android\intermediates\merged_manifest\debug\AndroidManifest.xml:14:13-35
+96            android:exported="false"
+96-->[:geolocator_android] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\geolocator_android\intermediates\merged_manifest\debug\AndroidManifest.xml:15:13-37
+97            android:foregroundServiceType="location" />
+97-->[:geolocator_android] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\geolocator_android\intermediates\merged_manifest\debug\AndroidManifest.xml:16:13-53
+98
+99        <activity
+99-->[:url_launcher_android] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:10:9-13:74
+100            android:name="io.flutter.plugins.urllauncher.WebViewActivity"
+100-->[:url_launcher_android] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:11:13-74
+101            android:exported="false"
+101-->[:url_launcher_android] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:12:13-37
+102            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+102-->[:url_launcher_android] C:\Users\fenci\OneDrive - University of Florida\parking-availability-system\uf-parking-app\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:13:13-71
+103
+104        <uses-library
+104-->[androidx.window:window:1.0.0-beta04] C:\Users\fenci\.gradle\caches\transforms-3\542a859793ec57d6a4d40865c7efc6d9\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:25:9-27:40
+105            android:name="androidx.window.extensions"
+105-->[androidx.window:window:1.0.0-beta04] C:\Users\fenci\.gradle\caches\transforms-3\542a859793ec57d6a4d40865c7efc6d9\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:26:13-54
+106            android:required="false" />
+106-->[androidx.window:window:1.0.0-beta04] C:\Users\fenci\.gradle\caches\transforms-3\542a859793ec57d6a4d40865c7efc6d9\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:27:13-37
+107        <uses-library
+107-->[androidx.window:window:1.0.0-beta04] C:\Users\fenci\.gradle\caches\transforms-3\542a859793ec57d6a4d40865c7efc6d9\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:28:9-30:40
+108            android:name="androidx.window.sidecar"
+108-->[androidx.window:window:1.0.0-beta04] C:\Users\fenci\.gradle\caches\transforms-3\542a859793ec57d6a4d40865c7efc6d9\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:29:13-51
+109            android:required="false" />
+109-->[androidx.window:window:1.0.0-beta04] C:\Users\fenci\.gradle\caches\transforms-3\542a859793ec57d6a4d40865c7efc6d9\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:30:13-37
+110
+111        <activity
+111-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:27:9-44:20
+112            android:name="com.google.firebase.auth.internal.GenericIdpActivity"
+112-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:28:13-80
+113            android:excludeFromRecents="true"
+113-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:29:13-46
+114            android:exported="true"
+114-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:30:13-36
+115            android:launchMode="singleTask"
+115-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:31:13-44
+116            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+116-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:32:13-72
+117            <intent-filter>
+117-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:33:13-43:29
+118                <action android:name="android.intent.action.VIEW" />
+118-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:34:17-69
+118-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:34:25-66
+119
+120                <category android:name="android.intent.category.DEFAULT" />
+120-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:36:17-76
+120-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:36:27-73
+121                <category android:name="android.intent.category.BROWSABLE" />
+121-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:37:17-78
+121-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:37:27-75
+122
+123                <data
+123-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:39:17-42:51
+124                    android:host="firebase.auth"
+124-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:40:21-49
+125                    android:path="/"
+125-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:41:21-37
+126                    android:scheme="genericidp" />
+126-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:42:21-48
+127            </intent-filter>
+128        </activity>
+129        <activity
+129-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:45:9-62:20
+130            android:name="com.google.firebase.auth.internal.RecaptchaActivity"
+130-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:46:13-79
+131            android:excludeFromRecents="true"
+131-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:47:13-46
+132            android:exported="true"
+132-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:48:13-36
+133            android:launchMode="singleTask"
+133-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:49:13-44
+134            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+134-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:50:13-72
+135            <intent-filter>
+135-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:51:13-61:29
+136                <action android:name="android.intent.action.VIEW" />
+136-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:34:17-69
+136-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:34:25-66
+137
+138                <category android:name="android.intent.category.DEFAULT" />
+138-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:36:17-76
+138-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:36:27-73
+139                <category android:name="android.intent.category.BROWSABLE" />
+139-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:37:17-78
+139-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:37:27-75
+140
+141                <data
+141-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:39:17-42:51
+142                    android:host="firebase.auth"
+142-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:40:21-49
+143                    android:path="/"
+143-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:41:21-37
+144                    android:scheme="recaptcha" />
+144-->[com.google.firebase:firebase-auth:21.1.0] C:\Users\fenci\.gradle\caches\transforms-3\0548e507d3019ac84ce4969b57803f45\transformed\jetified-firebase-auth-21.1.0\AndroidManifest.xml:42:21-48
+145            </intent-filter>
+146        </activity>
+147
+148        <provider
+148-->[com.google.firebase:firebase-common:20.2.0] C:\Users\fenci\.gradle\caches\transforms-3\c1f7cd0e68ddf89c76a753ac7fd1a66c\transformed\jetified-firebase-common-20.2.0\AndroidManifest.xml:25:9-30:39
+149            android:name="com.google.firebase.provider.FirebaseInitProvider"
+149-->[com.google.firebase:firebase-common:20.2.0] C:\Users\fenci\.gradle\caches\transforms-3\c1f7cd0e68ddf89c76a753ac7fd1a66c\transformed\jetified-firebase-common-20.2.0\AndroidManifest.xml:26:13-77
+150            android:authorities="com.example.uf_parking_map.firebaseinitprovider"
+150-->[com.google.firebase:firebase-common:20.2.0] C:\Users\fenci\.gradle\caches\transforms-3\c1f7cd0e68ddf89c76a753ac7fd1a66c\transformed\jetified-firebase-common-20.2.0\AndroidManifest.xml:27:13-72
+151            android:directBootAware="true"
+151-->[com.google.firebase:firebase-common:20.2.0] C:\Users\fenci\.gradle\caches\transforms-3\c1f7cd0e68ddf89c76a753ac7fd1a66c\transformed\jetified-firebase-common-20.2.0\AndroidManifest.xml:28:13-43
+152            android:exported="false"
+152-->[com.google.firebase:firebase-common:20.2.0] C:\Users\fenci\.gradle\caches\transforms-3\c1f7cd0e68ddf89c76a753ac7fd1a66c\transformed\jetified-firebase-common-20.2.0\AndroidManifest.xml:29:13-37
+153            android:initOrder="100" /> <!-- Needs to be explicitly declared on P+ -->
+153-->[com.google.firebase:firebase-common:20.2.0] C:\Users\fenci\.gradle\caches\transforms-3\c1f7cd0e68ddf89c76a753ac7fd1a66c\transformed\jetified-firebase-common-20.2.0\AndroidManifest.xml:30:13-36
+154        <uses-library
+154-->[com.google.android.gms:play-services-maps:18.1.0] C:\Users\fenci\.gradle\caches\transforms-3\d5e4c04f4690837574f4fd959dc722b7\transformed\jetified-play-services-maps-18.1.0\AndroidManifest.xml:39:9-41:40
+155            android:name="org.apache.http.legacy"
+155-->[com.google.android.gms:play-services-maps:18.1.0] C:\Users\fenci\.gradle\caches\transforms-3\d5e4c04f4690837574f4fd959dc722b7\transformed\jetified-play-services-maps-18.1.0\AndroidManifest.xml:40:13-50
+156            android:required="false" />
+156-->[com.google.android.gms:play-services-maps:18.1.0] C:\Users\fenci\.gradle\caches\transforms-3\d5e4c04f4690837574f4fd959dc722b7\transformed\jetified-play-services-maps-18.1.0\AndroidManifest.xml:41:13-37
+157
+158        <activity
+158-->[com.google.android.gms:play-services-auth:20.4.0] C:\Users\fenci\.gradle\caches\transforms-3\13c11db9378fe5d4a5611e5dfad2a7a1\transformed\jetified-play-services-auth-20.4.0\AndroidManifest.xml:23:9-27:75
+159            android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity"
+159-->[com.google.android.gms:play-services-auth:20.4.0] C:\Users\fenci\.gradle\caches\transforms-3\13c11db9378fe5d4a5611e5dfad2a7a1\transformed\jetified-play-services-auth-20.4.0\AndroidManifest.xml:24:13-93
+160            android:excludeFromRecents="true"
+160-->[com.google.android.gms:play-services-auth:20.4.0] C:\Users\fenci\.gradle\caches\transforms-3\13c11db9378fe5d4a5611e5dfad2a7a1\transformed\jetified-play-services-auth-20.4.0\AndroidManifest.xml:25:13-46
+161            android:exported="false"
+161-->[com.google.android.gms:play-services-auth:20.4.0] C:\Users\fenci\.gradle\caches\transforms-3\13c11db9378fe5d4a5611e5dfad2a7a1\transformed\jetified-play-services-auth-20.4.0\AndroidManifest.xml:26:13-37
+162            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+162-->[com.google.android.gms:play-services-auth:20.4.0] C:\Users\fenci\.gradle\caches\transforms-3\13c11db9378fe5d4a5611e5dfad2a7a1\transformed\jetified-play-services-auth-20.4.0\AndroidManifest.xml:27:13-72
+163        <!--
+164            Service handling Google Sign-In user revocation. For apps that do not integrate with
+165            Google Sign-In, this service will never be started.
+166        -->
+167        <service
+167-->[com.google.android.gms:play-services-auth:20.4.0] C:\Users\fenci\.gradle\caches\transforms-3\13c11db9378fe5d4a5611e5dfad2a7a1\transformed\jetified-play-services-auth-20.4.0\AndroidManifest.xml:33:9-37:51
+168            android:name="com.google.android.gms.auth.api.signin.RevocationBoundService"
+168-->[com.google.android.gms:play-services-auth:20.4.0] C:\Users\fenci\.gradle\caches\transforms-3\13c11db9378fe5d4a5611e5dfad2a7a1\transformed\jetified-play-services-auth-20.4.0\AndroidManifest.xml:34:13-89
+169            android:exported="true"
+169-->[com.google.android.gms:play-services-auth:20.4.0] C:\Users\fenci\.gradle\caches\transforms-3\13c11db9378fe5d4a5611e5dfad2a7a1\transformed\jetified-play-services-auth-20.4.0\AndroidManifest.xml:35:13-36
+170            android:permission="com.google.android.gms.auth.api.signin.permission.REVOCATION_NOTIFICATION"
+170-->[com.google.android.gms:play-services-auth:20.4.0] C:\Users\fenci\.gradle\caches\transforms-3\13c11db9378fe5d4a5611e5dfad2a7a1\transformed\jetified-play-services-auth-20.4.0\AndroidManifest.xml:36:13-107
+171            android:visibleToInstantApps="true" />
+171-->[com.google.android.gms:play-services-auth:20.4.0] C:\Users\fenci\.gradle\caches\transforms-3\13c11db9378fe5d4a5611e5dfad2a7a1\transformed\jetified-play-services-auth-20.4.0\AndroidManifest.xml:37:13-48
+172
+173        <activity
+173-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\fenci\.gradle\caches\transforms-3\19fea4fb28dedd992824e13cc158e7a1\transformed\jetified-play-services-base-18.0.1\AndroidManifest.xml:20:9-22:45
+174            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+174-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\fenci\.gradle\caches\transforms-3\19fea4fb28dedd992824e13cc158e7a1\transformed\jetified-play-services-base-18.0.1\AndroidManifest.xml:20:19-85
+175            android:exported="false"
+175-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\fenci\.gradle\caches\transforms-3\19fea4fb28dedd992824e13cc158e7a1\transformed\jetified-play-services-base-18.0.1\AndroidManifest.xml:22:19-43
+176            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+176-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\fenci\.gradle\caches\transforms-3\19fea4fb28dedd992824e13cc158e7a1\transformed\jetified-play-services-base-18.0.1\AndroidManifest.xml:21:19-78
+177
+178        <meta-data
+178-->[com.google.android.gms:play-services-basement:18.1.0] C:\Users\fenci\.gradle\caches\transforms-3\3ee0f8915dc9bf42c60f3eef0b7bd28a\transformed\jetified-play-services-basement-18.1.0\AndroidManifest.xml:21:9-23:69
+179            android:name="com.google.android.gms.version"
+179-->[com.google.android.gms:play-services-basement:18.1.0] C:\Users\fenci\.gradle\caches\transforms-3\3ee0f8915dc9bf42c60f3eef0b7bd28a\transformed\jetified-play-services-basement-18.1.0\AndroidManifest.xml:22:13-58
+180            android:value="@integer/google_play_services_version" />
+180-->[com.google.android.gms:play-services-basement:18.1.0] C:\Users\fenci\.gradle\caches\transforms-3\3ee0f8915dc9bf42c60f3eef0b7bd28a\transformed\jetified-play-services-basement-18.1.0\AndroidManifest.xml:23:13-66
+181    </application>
+182
+183</manifest>
