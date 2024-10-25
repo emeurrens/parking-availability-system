@@ -93,5 +93,5 @@ func main() {
 	router.DELETE("/deleteCar", endpoints.DeleteCar)
 	router.PUT("/updateCar", endpoints.UpdateCar)
 
-	router.Run("localhost:8080")
+	router.Run(":8080")
 }
