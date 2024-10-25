@@ -20,11 +20,14 @@ There are multiple comparable existing devices from various vendors used to moni
   - Raspberry Pi has been configured and setup to boot with the Raspbian OS
   - Individuals can SSH into the raspberry pi from the UF VPN
   - Connection has been established between the Raspberry Pi and the database
+  - Camera method can take a photo when called upon and store it on the RPi
 - Raspberry Pi Hardware
-  - 
+  - Camera module is configured
 - Research efforts
   - 
 
 ## Architecture:
 
 ## Bugs:
+- Raspberry Pi
+  - Camera module sometimes freezes the raspberry pi when taking a picture due to high I/O operation reading and writing usages
