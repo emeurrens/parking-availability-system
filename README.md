@@ -12,3 +12,19 @@ There are multiple comparable existing devices from various vendors used to moni
 - Facility Parking Availability Prediction
   - Accessible via mobile app for users
 - License Plate Recognition
+
+## Completed Work:
+- AWS
+  - AWS PostgreSQL Database has been configured and setup to store vehicle information
+- Raspberry Pi Software
+  - Raspberry Pi has been configured and setup to boot with the Raspbian OS
+  - Individuals can SSH into the raspberry pi from the UF VPN
+  - Connection has been established between the Raspberry Pi and the database
+- Raspberry Pi Hardware
+  - 
+- Research efforts
+  - 
+
+## Architecture:
+
+## Bugs:
