@@ -50,6 +50,7 @@ dependencies:
   google_sign_in: ^5.4.2
   flutter_signin_button: ^2.0.0
   sliding_up_panel: ^2.0.0+1
+  postgres: ^2.4.3
   
 
 dev_dependencies:
