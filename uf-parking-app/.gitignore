@@ -1,0 +1,15 @@
+# Exposes firebase information, already changed firebase project
+android/app/google-services.json
+ios/firebase_app_id_file.json
+lib/firebase_options.dart
+macos/firebase_app_id_file.json
+
+# Exposes Google Maps API information (need to change still)
+android/app/src/main/AndroidManifest.xml
+ios/Runner/AppDelegate.swift
+
+# Exposes database connection credentials
+assets/db_conn.txt
+
+# I saw the words "API" and "KEY", so playing it safe
+macos/Runner/GoogleService-Info.plist
