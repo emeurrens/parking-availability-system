@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../provider/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:uf_parking_map/services/database_service.dart';
+import '../services/database_service.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({
@@ -43,37 +45,47 @@ class LoginPage extends StatelessWidget {
           ),
           Column(
             children: [
-              const Text("Log In",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20.0,
-                  )),
+              // const Text("Connecting to Database . . .",
+              //     style: TextStyle(
+              //       fontWeight: FontWeight.w600,
+              //       fontSize: 20.0,
+              //     )),
               const Divider(
                 color: Colors.white,
                 height: 25,
               ),
+              //const Center(child: CircularProgressIndicator()),
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.6,
                 height: MediaQuery.of(context).size.height / 14,
-                child: SignInButton(
-                  Buttons.GoogleDark,
+                child: ElevatedButton(
+                  child: const Text('Connect to database'),
                   onPressed: () {
-                    final provider = Provider.of<GoogleSignInProvider>(context,
-                        listen: false);
-                    provider.googleLogin().then((value) {
-                      // Exception thrown when login is run, but we don't really
-                      // have the  time to debug, so you log in regardless
-                      // of whether you sign in or not, as long as you click
-                      // the button
-                      // THE CODE BELOW SHOULD WORK TO CHANGE THE STATE SUPPOSING
-                      // NO EXCEPTION IS THROWN AND THE USER SUCCESSFULLY LOGS IN
-                      /*if (FirebaseAuth.instance.currentUser != null) {
-                          notifyParent();
-                        }*/
-                      notifyParent();
-                    });
+                    while (DatabaseService.databaseConnection.isClosed){}
+                    notifyParent();
                   },
-                ),
+                )
+
+
+                // SignInButton(
+                //   Buttons.GoogleDark,
+                //   onPressed: () {
+                //     final provider = Provider.of<GoogleSignInProvider>(context,
+                //         listen: false);
+                //     provider.googleLogin().then((value) {
+                //       // Exception thrown when login is run, but we don't really
+                //       // have the  time to debug, so you log in regardless
+                //       // of whether you sign in or not, as long as you click
+                //       // the button
+                //       // THE CODE BELOW SHOULD WORK TO CHANGE THE STATE SUPPOSING
+                //       // NO EXCEPTION IS THROWN AND THE USER SUCCESSFULLY LOGS IN
+                //       /*if (FirebaseAuth.instance.currentUser != null) {
+                //           notifyParent();
+                //         }*/
+                //       notifyParent();
+                //     });
+                //   },
+                // ),
               ),
             ],
           ),

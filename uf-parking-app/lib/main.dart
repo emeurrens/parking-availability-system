@@ -6,6 +6,7 @@ import 'provider/google_sign_in.dart';
 import 'services/parking_data.dart';
 import 'screens/page_state_controller.dart';
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

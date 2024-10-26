@@ -20,6 +20,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "buffer",
+      "rootUri": "file:///C:/Frameworks/flutter/.pub-cache/hosted/pub.dartlang.org/buffer-1.2.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "characters",
       "rootUri": "file:///C:/Frameworks/flutter/.pub-cache/hosted/pub.dartlang.org/characters-1.2.1",
       "packageUri": "lib/",
@@ -48,6 +54,12 @@
       "rootUri": "file:///C:/Frameworks/flutter/.pub-cache/hosted/pub.dartlang.org/collection-1.16.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "crypto",
+      "rootUri": "file:///C:/Frameworks/flutter/.pub-cache/hosted/pub.dartlang.org/crypto-3.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
     },
     {
       "name": "cupertino_icons",
@@ -332,6 +344,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "postgres",
+      "rootUri": "file:///C:/Frameworks/flutter/.pub-cache/hosted/pub.dartlang.org/postgres-2.5.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "provider",
       "rootUri": "file:///C:/Frameworks/flutter/.pub-cache/hosted/pub.dartlang.org/provider-6.0.4",
       "packageUri": "lib/",
@@ -340,6 +358,18 @@
     {
       "name": "quiver",
       "rootUri": "file:///C:/Frameworks/flutter/.pub-cache/hosted/pub.dartlang.org/quiver-3.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "sasl_scram",
+      "rootUri": "file:///C:/Frameworks/flutter/.pub-cache/hosted/pub.dartlang.org/sasl_scram-0.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "saslprep",
+      "rootUri": "file:///C:/Frameworks/flutter/.pub-cache/hosted/pub.dartlang.org/saslprep-1.0.3",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -404,6 +434,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "unorm_dart",
+      "rootUri": "file:///C:/Frameworks/flutter/.pub-cache/hosted/pub.dartlang.org/unorm_dart-0.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "url_launcher",
       "rootUri": "file:///C:/Frameworks/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher-6.1.7",
       "packageUri": "lib/",
@@ -464,7 +500,7 @@
       "languageVersion": "2.18"
     }
   ],
-  "generated": "2024-10-25T13:08:00.954879Z",
+  "generated": "2024-10-25T23:40:29.539862Z",
   "generator": "pub",
   "generatorVersion": "2.18.6"
 }
