@@ -2,10 +2,12 @@ package data
 
 import (
 	"fmt"
+	"time"
 
 	"backpacktech.com/LPD/data/car"
 	"backpacktech.com/LPD/data/lot"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 // Todo set up DB migrations
@@ -30,7 +32,7 @@ func generateSQLCar(queryType string, vehicle *car.Car, uuid *string) string {
 func generateSQLLot(queryType string, lot *lot.Lot, uuid *string) string {
 	switch queryType {
 	case "save":
-		return fmt.Sprintf("INSERT INTO lots(lotid, latitude, longitude, address) VALUES('%s', '%f', '%f', '%s')", lot.GetID().String(), lot.Longitude, lot.Longitude, lot.Address)
+		return fmt.Sprintf("INSERT INTO lots(lotid, latitude, longitude, address, open, close, days, decals, occupancy, capacity, notes, verified) VALUES('%s', '%f', '%f', '%s', '%s', '%s', '%v', '%v', '%d', '%d', '%s', '%t')", lot.GetID(), lot.Latitude, lot.Longitude, lot.Address, lot.Open.FormatAsPSQLTime(), lot.Close.FormatAsPSQLTime(), lot.Days.ValueAsPSQLArray(), lot.Decals.ValueAsPSQLArray(), lot.Occupancy, lot.Capacity, lot.Notes, lot.Verified)
 	case "get":
 		return fmt.Sprintf("SELECT * FROM lots WHERE lotid = '%s'", *uuid)
 	case "getAll":
@@ -38,7 +40,7 @@ func generateSQLLot(queryType string, lot *lot.Lot, uuid *string) string {
 	case "delete":
 		return fmt.Sprintf("DELETE FROM lots WHERE lotid = '%s'", *uuid)
 	case "update":
-		return fmt.Sprintf("UPDATE lots SET latitude = '%f', longitude = '%f', address = '%s' WHERE lotid = '%s'", lot.Longitude, lot.Longitude, lot.Address, lot.GetID().String())
+		return fmt.Sprintf("UPDATE lots SET latitude = '%f', longitude = '%f', address = '%s' , open = '%s', close = '%s', days = '%v', decals = '%v', occupancy = '%d', capacity = '%d', notes = '%s', verified = '%t' WHERE lotid = '%s'", lot.Latitude, lot.Longitude, lot.Address, lot.Open.FormatAsPSQLTime(), lot.Close.FormatAsPSQLTime(), lot.Days.ValueAsPSQLArray(), lot.Decals.ValueAsPSQLArray(), lot.Occupancy, lot.Capacity, lot.Notes, lot.Verified, lot.GetID())
 	default:
 		return ""
 	}
@@ -133,14 +135,19 @@ func GetLot(_uuid uuid.UUID, db *Database) (current_lot *lot.Lot, err error) {
 	var lotID uuid.UUID
 	var latitude, longitude float64
 	var address string
+	var open, close time.Time
+	var days, decals []string
+	var occupancy, capacity int
+	var notes string
+	var verified bool
 
 	row := db.DB.QueryRow(sql)
-	err = row.Scan(&lotID, &latitude, &longitude, &address)
+	err = row.Scan(&lotID, &latitude, &longitude, &address, &open, &close, pq.Array(&days), pq.Array(&decals), &occupancy, &capacity, &notes, &verified)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	current_lot = lot.New(lotID, latitude, longitude, address)
+	current_lot = lot.New(lotID, latitude, longitude, address, open, close, days, decals, occupancy, capacity, notes, verified)
 	return current_lot, err
 }
 
@@ -157,13 +164,18 @@ func GetAllLots(db *Database) (all_lots []*lot.Lot, err error) {
 		var lotID uuid.UUID
 		var latitude, longitude float64
 		var address string
+		var open, close time.Time
+		var days, decals []string
+		var occupancy, capacity int
+		var notes string
+		var verified bool
 
-		err = rows.Scan(&lotID, &latitude, &longitude, &address)
+		err = rows.Scan(&lotID, &latitude, &longitude, &address, &open, &close, pq.Array(&days), pq.Array(&decals), &occupancy, &capacity, &notes, &verified)
 		if err != nil {
 			panic(err)
 		}
 
-		lot := lot.New(lotID, latitude, longitude, address)
+		lot := lot.New(lotID, latitude, longitude, address, open, close, days, decals, occupancy, capacity, notes, verified)
 		all_lots = append(all_lots, lot)
 	}
 	return all_lots, err
