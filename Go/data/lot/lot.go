@@ -89,11 +89,11 @@ func (s *psqlStrArray) ValueAsPSQLArray() driver.Value {
 }
 
 func (t *psqlTime) FormatAsPSQLTime() string {
-	return time.Time(*t).Format("15:04:00")
+	return time.Time(*t).Format(time.TimeOnly)
 }
 
 func (t *psqlTime) MarshalJSON() ([]byte, error) {
-	stringTime := time.Time(*t).Format("15:04:00")
+	stringTime := time.Time(*t).Format(time.TimeOnly)
 	return json.Marshal(stringTime)
 }
 
@@ -103,7 +103,7 @@ func (t *psqlTime) UnmarshalJSON(b []byte) error {
 	if err != nil {
 		return err
 	}
-	parsedTime, err := time.Parse("15:04:00", stringTime)
+	parsedTime, err := time.Parse(time.TimeOnly, stringTime)
 	if err != nil {
 		return err
 	}
