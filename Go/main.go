@@ -2,10 +2,9 @@
 
 // import (
 // 	"math/rand"
-// 	"strconv"
+// 	"time"
 
 // 	"backpacktech.com/LPD/data"
-// 	"backpacktech.com/LPD/data/car"
 // 	"backpacktech.com/LPD/data/lot"
 // 	"github.com/google/uuid"
 // )
@@ -47,9 +46,12 @@
 // 		data.DeleteCar(car.GetID(), &prodDB)
 // 	}
 
+// 	openTime := time.Now()
+// 	closeTime := time.Now()
+
 // 	// Create new lot
-// 	var testLot *lot.Lot = lot.New(uuid.New(), 0.0, 0.0, "1234 Main St")
-// 	println(testLot.Address)
+// 	var testLot *lot.Lot = lot.New(uuid.New(), rand.Float64(), rand.Float64(), "1234 Main St", openTime, closeTime, []string{"M", "T"}, []string{"Red", "Green"}, 0, 100, "test note", true)
+// 	println(testLot.GetID().String())
 
 // 	data.SaveLot(testLot, &prodDB)
 
@@ -66,7 +68,7 @@
 
 // 	// Create 10 lots
 // 	for i := 0; i < 10; i++ {
-// 		var testLot *lot.Lot = lot.New(uuid.New(), rand.Float64(), rand.Float64(), "1234 Main St")
+// 		var testLot *lot.Lot = lot.New(uuid.New(), rand.Float64(), rand.Float64(), "1234 Main St", openTime, closeTime, []string{"M", "T"}, []string{"Red", "Green"}, 0, 100, "test note", true)
 // 		data.SaveLot(testLot, &prodDB)
 // 	}
 
@@ -92,6 +94,12 @@ func main() {
 	router.POST("/saveCar", endpoints.SaveCar)
 	router.DELETE("/deleteCar", endpoints.DeleteCar)
 	router.PUT("/updateCar", endpoints.UpdateCar)
+
+	router.GET("/getLot", endpoints.GetLot)
+	router.GET("/getAllLots", endpoints.GetAllLots)
+	router.POST("/saveLot", endpoints.SaveLot)
+	router.DELETE("/deleteLot", endpoints.DeleteLot)
+	router.PUT("/updateLot", endpoints.UpdateLot)
 
 	router.Run(":8080")
 }
