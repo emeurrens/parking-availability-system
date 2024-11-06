@@ -14,7 +14,7 @@ build-backend:
 
 run-backend:
 	@echo "Running backend..."
-	./bin/backend
+	DATABASE_URL=${DATABASE_URL} ./bin/backend
 
 build-tests:
 	@echo "Building tests binary..."
