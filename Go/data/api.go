@@ -10,8 +10,6 @@ import (
 	"github.com/lib/pq"
 )
 
-// Todo set up DB migrations
-
 func generateSQLCar(queryType string, vehicle *car.Car, uuid *string) string {
 	switch queryType {
 	case "save":
