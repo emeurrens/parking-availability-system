@@ -32,7 +32,7 @@ func generateSQLCar(queryType string, vehicle *car.Car, uuid *string) string {
 func generateSQLLot(queryType string, lot *lot.Lot, uuid *string) string {
 	switch queryType {
 	case "save":
-		return fmt.Sprintf("INSERT INTO lots(lotid, latitude, longitude, name, address, open, close, days, decals, occupancy, capacity, notes, verified) VALUES('%s', '%f', '%f', '%s', '%s', '%s', '%s', '%v', '%v', '%d', '%d', '%s', '%t', '%t')", lot.GetID(), lot.Latitude, lot.Longitude, lot.Name, lot.Address, lot.Open.FormatAsPSQLTime(), lot.Close.FormatAsPSQLTime(), lot.Days.ValueAsPSQLArray(), lot.Decals.ValueAsPSQLArray(), lot.Occupancy, lot.Capacity, lot.Notes, lot.Verified, lot.EvCharging)
+		return fmt.Sprintf("INSERT INTO lots(lotid, latitude, longitude, name, address, open, close, days, decals, occupancy, capacity, notes, verified, evCharging) VALUES('%s', '%f', '%f', '%s', '%s', '%s', '%s', '%v', '%v', '%d', '%d', '%s', '%t', '%t')", lot.GetID(), lot.Latitude, lot.Longitude, lot.Name, lot.Address, lot.Open.FormatAsPSQLTime(), lot.Close.FormatAsPSQLTime(), lot.Days.ValueAsPSQLArray(), lot.Decals.ValueAsPSQLArray(), lot.Occupancy, lot.Capacity, lot.Notes, lot.Verified, lot.EvCharging)
 	case "get":
 		return fmt.Sprintf("SELECT * FROM lots WHERE lotid = '%s'", *uuid)
 	case "getAll":
