@@ -64,12 +64,20 @@ func GetCar(_uuid uuid.UUID, db *Database) (vehicle *car.Car, err error) {
 	var license_plate, color string
 
 	row := db.DB.QueryRow(sql)
-	err = row.Scan(&carId, &license_plate, &color)
+	err = row.Scan(
+		&carId,
+		&license_plate,
+		&color,
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	vehicle = car.New(carId, license_plate, color)
+	vehicle = car.New(
+		carId,
+		license_plate,
+		color,
+	)
 	return vehicle, err
 }
 
@@ -86,12 +94,20 @@ func GetAllCars(db *Database) (vehicles []*car.Car, err error) {
 		var carId uuid.UUID
 		var license_plate, color string
 
-		err = rows.Scan(&carId, &license_plate, &color)
+		err = rows.Scan(
+			&carId,
+			&license_plate,
+			&color,
+		)
 		if err != nil {
 			panic(err)
 		}
 
-		vehicle := car.New(carId, license_plate, color)
+		vehicle := car.New(
+			carId,
+			license_plate,
+			color,
+		)
 		vehicles = append(vehicles, vehicle)
 	}
 	return vehicles, err
@@ -139,15 +155,45 @@ func GetLot(_uuid uuid.UUID, db *Database) (current_lot *lot.Lot, err error) {
 	var days, decals []string
 	var occupancy, capacity int
 	var notes string
-	var verified bool
+	var verified, evCharging bool
 
 	row := db.DB.QueryRow(sql)
-	err = row.Scan(&lotID, &latitude, &longitude, &name, &address, &open, &close, pq.Array(&days), pq.Array(&decals), &occupancy, &capacity, &notes, &verified)
+	err = row.Scan(
+		&lotID,
+		&latitude,
+		&longitude,
+		&name,
+		&address,
+		&open,
+		&close,
+		pq.Array(&days),
+		pq.Array(&decals),
+		&occupancy,
+		&capacity,
+		&notes,
+		&verified,
+		&evCharging,
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	current_lot = lot.New(lotID, latitude, longitude, name, address, open, close, days, decals, occupancy, capacity, notes, verified)
+	current_lot = lot.New(
+		lotID,
+		latitude,
+		longitude,
+		name,
+		address,
+		open,
+		close,
+		days,
+		decals,
+		occupancy,
+		capacity,
+		notes,
+		verified,
+		evCharging,
+	)
 	return current_lot, err
 }
 
@@ -168,14 +214,44 @@ func GetAllLots(db *Database) (all_lots []*lot.Lot, err error) {
 		var days, decals []string
 		var occupancy, capacity int
 		var notes string
-		var verified bool
+		var verified, evCharging bool
 
-		err = rows.Scan(&lotID, &latitude, &longitude, &name, &address, &open, &close, pq.Array(&days), pq.Array(&decals), &occupancy, &capacity, &notes, &verified)
+		err = rows.Scan(
+			&lotID,
+			&latitude,
+			&longitude,
+			&name,
+			&address,
+			&open,
+			&close,
+			pq.Array(&days),
+			pq.Array(&decals),
+			&occupancy,
+			&capacity,
+			&notes,
+			&verified,
+			&evCharging,
+		)
 		if err != nil {
 			panic(err)
 		}
 
-		lot := lot.New(lotID, latitude, longitude, name, address, open, close, days, decals, occupancy, capacity, notes, verified)
+		lot := lot.New(
+			lotID,
+			latitude,
+			longitude,
+			name,
+			address,
+			open,
+			close,
+			days,
+			decals,
+			occupancy,
+			capacity,
+			notes,
+			verified,
+			evCharging,
+		)
 		all_lots = append(all_lots, lot)
 	}
 	return all_lots, err

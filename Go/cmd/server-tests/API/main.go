@@ -52,7 +52,7 @@ func main() {
 	closeTime := time.Now()
 
 	// Create new lot
-	var testLot *lot.Lot = lot.New(uuid.New(), rand.Float64(), rand.Float64(), "test name", "1234 Main St", openTime, closeTime, []string{"M", "T"}, []string{"Red", "Green"}, 0, 100, "test note", true)
+	var testLot *lot.Lot = lot.New(uuid.New(), rand.Float64(), rand.Float64(), "test name", "1234 Main St", openTime, closeTime, []string{"M", "T"}, []string{"Red", "Green"}, 0, 100, "test note", true, false)
 	println(testLot.GetID().String())
 
 	data.SaveLot(testLot, &prodDB)
@@ -70,7 +70,7 @@ func main() {
 
 	// Create 10 lots
 	for i := 0; i < 10; i++ {
-		var testLot *lot.Lot = lot.New(uuid.New(), rand.Float64(), rand.Float64(), "test name", "1234 Main St", openTime, closeTime, []string{"M", "T"}, []string{"Red", "Green"}, 0, 100, "test note", true)
+		var testLot *lot.Lot = lot.New(uuid.New(), rand.Float64(), rand.Float64(), "test name", "1234 Main St", openTime, closeTime, []string{"M", "T"}, []string{"Red", "Green"}, 0, 100, "test note", true, false)
 		data.SaveLot(testLot, &prodDB)
 	}
 

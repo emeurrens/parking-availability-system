@@ -18,7 +18,11 @@ type Car struct {
 	Color         sql.NullString `json:"color"`
 }
 
-func New(_uuid uuid.UUID, _license_plate string, _color string) *Car {
+func New(
+	_uuid uuid.UUID,
+	_license_plate string,
+	_color string,
+) *Car {
 
 	var validColor bool = false
 	if _color != "" {

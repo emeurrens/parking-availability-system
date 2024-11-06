@@ -51,7 +51,11 @@ func SaveCar(c *gin.Context) {
 		return
 	}
 
-	var saveCar *car.Car = car.New(uuid, reqCar.License_plate, reqCar.Color.String)
+	var saveCar *car.Car = car.New(
+		uuid,
+		reqCar.License_plate,
+		reqCar.Color.String,
+	)
 
 	err = data.SaveCar(saveCar, &prodDB)
 	if err != nil {
@@ -134,7 +138,11 @@ func UpdateCar(c *gin.Context) {
 		return
 	}
 
-	updateCar := car.New(reqCar.CarID, reqCar.License_plate, reqCar.Color.String)
+	updateCar := car.New(
+		reqCar.CarID,
+		reqCar.License_plate,
+		reqCar.Color.String,
+	)
 	err = data.UpdateCar(updateCar, &prodDB)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Unable to Update Car", "error_message": err.Error()})
@@ -184,7 +192,22 @@ func SaveLot(c *gin.Context) {
 		return
 	}
 
-	var saveLot *lot.Lot = lot.New(uuid, reqLot.Latitude, reqLot.Longitude, reqLot.Name, reqLot.Address, time.Time(reqLot.Open), time.Time(reqLot.Close), reqLot.Days, reqLot.Decals, reqLot.Occupancy, reqLot.Capacity, reqLot.Notes, reqLot.Verified)
+	var saveLot *lot.Lot = lot.New(
+		uuid,
+		reqLot.Latitude,
+		reqLot.Longitude,
+		reqLot.Name,
+		reqLot.Address,
+		time.Time(reqLot.Open),
+		time.Time(reqLot.Close),
+		reqLot.Days,
+		reqLot.Decals,
+		reqLot.Occupancy,
+		reqLot.Capacity,
+		reqLot.Notes,
+		reqLot.Verified,
+		reqLot.EvCharging,
+	)
 
 	err = data.SaveLot(saveLot, &prodDB)
 	if err != nil {
@@ -267,7 +290,22 @@ func UpdateLot(c *gin.Context) {
 		return
 	}
 
-	updateLot := lot.New(reqLot.LotID, reqLot.Latitude, reqLot.Longitude, reqLot.Name, reqLot.Address, time.Time(reqLot.Open), time.Time(reqLot.Close), reqLot.Days, reqLot.Decals, reqLot.Occupancy, reqLot.Capacity, reqLot.Notes, reqLot.Verified)
+	updateLot := lot.New(
+		reqLot.LotID,
+		reqLot.Latitude,
+		reqLot.Longitude,
+		reqLot.Name,
+		reqLot.Address,
+		time.Time(reqLot.Open),
+		time.Time(reqLot.Close),
+		reqLot.Days,
+		reqLot.Decals,
+		reqLot.Occupancy,
+		reqLot.Capacity,
+		reqLot.Notes,
+		reqLot.Verified,
+		reqLot.EvCharging,
+	)
 	err = data.UpdateLot(updateLot, &prodDB)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Unable to Update Lot", "error_message": err.Error()})
