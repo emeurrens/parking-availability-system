@@ -42,7 +42,7 @@ type Lot struct {
 	Verified  bool         `json:"verified"`
 }
 
-func New(_uuid uuid.UUID, _lon float64, _lat float64, _address string, _open time.Time, _close time.Time, _days []string, _decals []string, _occupancy int, _capacity int, _notes string, _verified bool) *Lot {
+func New(_uuid uuid.UUID, _lat float64, _lon float64, _address string, _open time.Time, _close time.Time, _days []string, _decals []string, _occupancy int, _capacity int, _notes string, _verified bool) *Lot {
 	return &Lot{
 		lotID:     _uuid,
 		Latitude:  _lat,
