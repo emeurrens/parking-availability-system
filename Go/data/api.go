@@ -32,7 +32,7 @@ func generateSQLCar(queryType string, vehicle *car.Car, uuid *string) string {
 func generateSQLLot(queryType string, lot *lot.Lot, uuid *string) string {
 	switch queryType {
 	case "save":
-		return fmt.Sprintf("INSERT INTO lots(lotid, latitude, longitude, address, open, close, days, decals, occupancy, capacity, notes, verified) VALUES('%s', '%f', '%f', '%s', '%s', '%s', '%v', '%v', '%d', '%d', '%s', '%t')", lot.GetID(), lot.Latitude, lot.Longitude, lot.Address, lot.Open.FormatAsPSQLTime(), lot.Close.FormatAsPSQLTime(), lot.Days.ValueAsPSQLArray(), lot.Decals.ValueAsPSQLArray(), lot.Occupancy, lot.Capacity, lot.Notes, lot.Verified)
+		return fmt.Sprintf("INSERT INTO lots(lotid, latitude, longitude, name, address, open, close, days, decals, occupancy, capacity, notes, verified) VALUES('%s', '%f', '%f', '%s', '%s', '%s', '%s', '%v', '%v', '%d', '%d', '%s', '%t', '%t')", lot.GetID(), lot.Latitude, lot.Longitude, lot.Name, lot.Address, lot.Open.FormatAsPSQLTime(), lot.Close.FormatAsPSQLTime(), lot.Days.ValueAsPSQLArray(), lot.Decals.ValueAsPSQLArray(), lot.Occupancy, lot.Capacity, lot.Notes, lot.Verified, lot.EvCharging)
 	case "get":
 		return fmt.Sprintf("SELECT * FROM lots WHERE lotid = '%s'", *uuid)
 	case "getAll":
@@ -40,7 +40,7 @@ func generateSQLLot(queryType string, lot *lot.Lot, uuid *string) string {
 	case "delete":
 		return fmt.Sprintf("DELETE FROM lots WHERE lotid = '%s'", *uuid)
 	case "update":
-		return fmt.Sprintf("UPDATE lots SET latitude = '%f', longitude = '%f', address = '%s' , open = '%s', close = '%s', days = '%v', decals = '%v', occupancy = '%d', capacity = '%d', notes = '%s', verified = '%t' WHERE lotid = '%s'", lot.Latitude, lot.Longitude, lot.Address, lot.Open.FormatAsPSQLTime(), lot.Close.FormatAsPSQLTime(), lot.Days.ValueAsPSQLArray(), lot.Decals.ValueAsPSQLArray(), lot.Occupancy, lot.Capacity, lot.Notes, lot.Verified, lot.GetID())
+		return fmt.Sprintf("UPDATE lots SET latitude = '%f', longitude = '%f', name = '%s', address = '%s' , open = '%s', close = '%s', days = '%v', decals = '%v', occupancy = '%d', capacity = '%d', notes = '%s', verified = '%t', evCharging = '%t' WHERE lotid = '%s'", lot.Latitude, lot.Longitude, lot.Name, lot.Address, lot.Open.FormatAsPSQLTime(), lot.Close.FormatAsPSQLTime(), lot.Days.ValueAsPSQLArray(), lot.Decals.ValueAsPSQLArray(), lot.Occupancy, lot.Capacity, lot.Notes, lot.Verified, lot.EvCharging, lot.GetID())
 	default:
 		return ""
 	}
