@@ -184,7 +184,7 @@ func SaveLot(c *gin.Context) {
 		return
 	}
 
-	var saveLot *lot.Lot = lot.New(uuid, reqLot.Latitude, reqLot.Longitude, reqLot.Address, time.Time(reqLot.Open), time.Time(reqLot.Close), reqLot.Days, reqLot.Decals, reqLot.Occupancy, reqLot.Capacity, reqLot.Notes, reqLot.Verified)
+	var saveLot *lot.Lot = lot.New(uuid, reqLot.Latitude, reqLot.Longitude, reqLot.Name, reqLot.Address, time.Time(reqLot.Open), time.Time(reqLot.Close), reqLot.Days, reqLot.Decals, reqLot.Occupancy, reqLot.Capacity, reqLot.Notes, reqLot.Verified)
 
 	err = data.SaveLot(saveLot, &prodDB)
 	if err != nil {
@@ -267,7 +267,7 @@ func UpdateLot(c *gin.Context) {
 		return
 	}
 
-	updateLot := lot.New(reqLot.LotID, reqLot.Latitude, reqLot.Longitude, reqLot.Address, time.Time(reqLot.Open), time.Time(reqLot.Close), reqLot.Days, reqLot.Decals, reqLot.Occupancy, reqLot.Capacity, reqLot.Notes, reqLot.Verified)
+	updateLot := lot.New(reqLot.LotID, reqLot.Latitude, reqLot.Longitude, reqLot.Name, reqLot.Address, time.Time(reqLot.Open), time.Time(reqLot.Close), reqLot.Days, reqLot.Decals, reqLot.Occupancy, reqLot.Capacity, reqLot.Notes, reqLot.Verified)
 	err = data.UpdateLot(updateLot, &prodDB)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Unable to Update Lot", "error_message": err.Error()})

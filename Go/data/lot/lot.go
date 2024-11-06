@@ -16,6 +16,7 @@ type InternalLot struct {
 	LotID     uuid.UUID    `json:"LotID"`
 	Latitude  float64      `json:"latitude"`
 	Longitude float64      `json:"longitude"`
+	Name      string       `json:"name"`
 	Address   string       `json:"address"`
 	Open      psqlTime     `json:"open"`
 	Close     psqlTime     `json:"close"`
@@ -31,6 +32,7 @@ type Lot struct {
 	lotID     uuid.UUID
 	Latitude  float64      `json:"latitude"`
 	Longitude float64      `json:"longitude"`
+	Name      string       `json:"name"`
 	Address   string       `json:"address"`
 	Open      psqlTime     `json:"open"`
 	Close     psqlTime     `json:"close"`
@@ -42,11 +44,12 @@ type Lot struct {
 	Verified  bool         `json:"verified"`
 }
 
-func New(_uuid uuid.UUID, _lat float64, _lon float64, _address string, _open time.Time, _close time.Time, _days []string, _decals []string, _occupancy int, _capacity int, _notes string, _verified bool) *Lot {
+func New(_uuid uuid.UUID, _lat float64, _lon float64, _name string, _address string, _open time.Time, _close time.Time, _days []string, _decals []string, _occupancy int, _capacity int, _notes string, _verified bool) *Lot {
 	return &Lot{
 		lotID:     _uuid,
 		Latitude:  _lat,
 		Longitude: _lon,
+		Name:      _name,
 		Address:   _address,
 		Open:      psqlTime(_open),
 		Close:     psqlTime(_close),
@@ -68,6 +71,7 @@ func (l *Lot) ConvertToInternalLot() *InternalLot {
 		LotID:     l.GetID(),
 		Latitude:  l.Latitude,
 		Longitude: l.Longitude,
+		Name:      l.Name,
 		Address:   l.Address,
 		Open:      l.Open,
 		Close:     l.Close,
