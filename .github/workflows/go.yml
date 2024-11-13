@@ -1,0 +1,32 @@
+# This workflow will build tests for the Golang portion of the repo
+name: Go
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Go
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+
+    - name: Build
+      run: make
+
+    - name: Test-API
+      run: go test -v ./data
+
+    - name: Test-Endpoints
+      run: go test -v ./endpoints
