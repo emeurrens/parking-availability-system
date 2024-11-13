@@ -30,7 +30,7 @@ func generateSQLCar(queryType string, vehicle *car.Car, uuid *string) string {
 func generateSQLLot(queryType string, lot *lot.Lot, uuid *string) string {
 	switch queryType {
 	case "save":
-		return fmt.Sprintf("INSERT INTO lots(lotid, latitude, longitude, name, address, open, close, days, decals, occupancy, capacity, notes, verified, evCharging) VALUES('%s', '%f', '%f', '%s', '%s', '%s', '%s', '%v', '%v', '%d', '%d', '%s', '%t', '%t')", lot.GetID(), lot.Latitude, lot.Longitude, lot.Name, lot.Address, lot.Open.FormatAsPSQLTime(), lot.Close.FormatAsPSQLTime(), lot.Days.ValueAsPSQLArray(), lot.Decals.ValueAsPSQLArray(), lot.Occupancy, lot.Capacity, lot.Notes, lot.Verified, lot.EvCharging)
+		return fmt.Sprintf("INSERT INTO lots(lotid, latitude, longitude, name, address, open, close, days, decals, occupancy, capacity, notes, verified, evCharging) VALUES('%s', '%f', '%f', '%s', '%s', '%s', '%s', '%v', '%v', '%d', '%d', '%s', '%s', '%t')", lot.GetID(), lot.Latitude, lot.Longitude, lot.Name, lot.Address, lot.Open.FormatAsPSQLTime(), lot.Close.FormatAsPSQLTime(), lot.Days.ValueAsPSQLArray(), lot.Decals.ValueAsPSQLArray(), lot.Occupancy, lot.Capacity, lot.Notes, lot.Verified.FormatAsPSQLDate(), lot.EvCharging)
 	case "get":
 		return fmt.Sprintf("SELECT * FROM lots WHERE lotid = '%s'", *uuid)
 	case "getAll":
@@ -38,7 +38,7 @@ func generateSQLLot(queryType string, lot *lot.Lot, uuid *string) string {
 	case "delete":
 		return fmt.Sprintf("DELETE FROM lots WHERE lotid = '%s'", *uuid)
 	case "update":
-		return fmt.Sprintf("UPDATE lots SET latitude = '%f', longitude = '%f', name = '%s', address = '%s' , open = '%s', close = '%s', days = '%v', decals = '%v', occupancy = '%d', capacity = '%d', notes = '%s', verified = '%t', evCharging = '%t' WHERE lotid = '%s'", lot.Latitude, lot.Longitude, lot.Name, lot.Address, lot.Open.FormatAsPSQLTime(), lot.Close.FormatAsPSQLTime(), lot.Days.ValueAsPSQLArray(), lot.Decals.ValueAsPSQLArray(), lot.Occupancy, lot.Capacity, lot.Notes, lot.Verified, lot.EvCharging, lot.GetID())
+		return fmt.Sprintf("UPDATE lots SET latitude = '%f', longitude = '%f', name = '%s', address = '%s' , open = '%s', close = '%s', days = '%v', decals = '%v', occupancy = '%d', capacity = '%d', notes = '%s', verified = '%s', evCharging = '%t' WHERE lotid = '%s'", lot.Latitude, lot.Longitude, lot.Name, lot.Address, lot.Open.FormatAsPSQLTime(), lot.Close.FormatAsPSQLTime(), lot.Days.ValueAsPSQLArray(), lot.Decals.ValueAsPSQLArray(), lot.Occupancy, lot.Capacity, lot.Notes, lot.Verified.FormatAsPSQLDate(), lot.EvCharging, lot.GetID())
 	default:
 		return ""
 	}
@@ -149,11 +149,11 @@ func GetLot(_uuid uuid.UUID, db *Database) (current_lot *lot.Lot, err error) {
 	var lotID uuid.UUID
 	var latitude, longitude float64
 	var name, address string
-	var open, close time.Time
+	var open, close, verified time.Time
 	var days, decals []string
 	var occupancy, capacity int
 	var notes string
-	var verified, evCharging bool
+	var evCharging bool
 
 	row := db.DB.QueryRow(sql)
 	err = row.Scan(
@@ -169,8 +169,8 @@ func GetLot(_uuid uuid.UUID, db *Database) (current_lot *lot.Lot, err error) {
 		&occupancy,
 		&capacity,
 		&notes,
-		&verified,
 		&evCharging,
+		&verified,
 	)
 	if err != nil {
 		return nil, err
@@ -189,8 +189,8 @@ func GetLot(_uuid uuid.UUID, db *Database) (current_lot *lot.Lot, err error) {
 		occupancy,
 		capacity,
 		notes,
-		verified,
 		evCharging,
+		verified,
 	)
 	return current_lot, err
 }
@@ -208,11 +208,11 @@ func GetAllLots(db *Database) (all_lots []*lot.Lot, err error) {
 		var lotID uuid.UUID
 		var latitude, longitude float64
 		var name, address string
-		var open, close time.Time
+		var open, close, verified time.Time
 		var days, decals []string
 		var occupancy, capacity int
 		var notes string
-		var verified, evCharging bool
+		var evCharging bool
 
 		err = rows.Scan(
 			&lotID,
@@ -227,8 +227,8 @@ func GetAllLots(db *Database) (all_lots []*lot.Lot, err error) {
 			&occupancy,
 			&capacity,
 			&notes,
-			&verified,
 			&evCharging,
+			&verified,
 		)
 		if err != nil {
 			panic(err)
@@ -247,8 +247,8 @@ func GetAllLots(db *Database) (all_lots []*lot.Lot, err error) {
 			occupancy,
 			capacity,
 			notes,
-			verified,
 			evCharging,
+			verified,
 		)
 		all_lots = append(all_lots, lot)
 	}

@@ -9,19 +9,24 @@ import (
 )
 
 func init() {
-	goose.AddMigrationContext(upEvchargingLotTable, downEvchargingLotTable)
+	goose.AddMigrationContext(upVerifiedAsDate, downVerifiedAsDate)
 }
 
-func upEvchargingLotTable(ctx context.Context, tx *sql.Tx) error {
+func upVerifiedAsDate(ctx context.Context, tx *sql.Tx) error {
 	var prodDB data.Database = data.Database{
 		DB:   data.GetDB("", "", "", "", "", "", 0),
 		Name: "prod",
 	}
 	defer prodDB.DB.Close()
 
-	query := "ALTER TABLE lots ADD COLUMN evCharging BOOLEAN DEFAULT FALSE"
-
+	query := "ALTER TABLE lots DROP COLUMN verified"
 	_, err := tx.Exec(query)
+	if err != nil {
+		return err
+	}
+
+	query = "ALTER TABLE lots ADD COLUMN verified DATE DEFAULT '1901-01-01'"
+	_, err = tx.Exec(query)
 	if err != nil {
 		return err
 	}
@@ -29,15 +34,21 @@ func upEvchargingLotTable(ctx context.Context, tx *sql.Tx) error {
 	return nil
 }
 
-func downEvchargingLotTable(ctx context.Context, tx *sql.Tx) error {
+func downVerifiedAsDate(ctx context.Context, tx *sql.Tx) error {
 	var prodDB data.Database = data.Database{
 		DB:   data.GetDB("", "", "", "", "", "", 0),
 		Name: "prod",
 	}
 	defer prodDB.DB.Close()
 
-	query := "ALTER TABLE lots DROP COLUMN evCharging"
+	query := "ALTER TABLE lots DROP COLUMN verified"
 	_, err := tx.Exec(query)
+	if err != nil {
+		return err
+	}
+
+	query = "ALTER TABLE lots ADD COLUMN verified BOOLEAN DEFAULT FALSE"
+	_, err = tx.Exec(query)
 	if err != nil {
 		return err
 	}

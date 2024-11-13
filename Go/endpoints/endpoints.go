@@ -205,8 +205,8 @@ func SaveLot(c *gin.Context) {
 		reqLot.Occupancy,
 		reqLot.Capacity,
 		reqLot.Notes,
-		reqLot.Verified,
 		reqLot.EvCharging,
+		time.Time(reqLot.Verified),
 	)
 
 	err = data.SaveLot(saveLot, &prodDB)
@@ -303,8 +303,8 @@ func UpdateLot(c *gin.Context) {
 		reqLot.Occupancy,
 		reqLot.Capacity,
 		reqLot.Notes,
-		reqLot.Verified,
 		reqLot.EvCharging,
+		time.Time(reqLot.Verified),
 	)
 	err = data.UpdateLot(updateLot, &prodDB)
 	if err != nil {

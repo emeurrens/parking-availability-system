@@ -11,6 +11,7 @@ import (
 
 type psqlStrArray []string
 type psqlTime time.Time
+type psqlDate time.Time
 
 type InternalLot struct {
 	LotID      uuid.UUID    `json:"LotID"`
@@ -25,8 +26,8 @@ type InternalLot struct {
 	Occupancy  int          `json:"occupancy"`
 	Capacity   int          `json:"capacity"`
 	Notes      string       `json:"notes"`
-	Verified   bool         `json:"verified"`
 	EvCharging bool         `json:"evCharging"`
+	Verified   psqlDate     `json:"verified"`
 }
 
 type Lot struct {
@@ -42,8 +43,8 @@ type Lot struct {
 	Occupancy  int          `json:"occupancy"`
 	Capacity   int          `json:"capacity"`
 	Notes      string       `json:"notes"`
-	Verified   bool         `json:"verified"`
 	EvCharging bool         `json:"evCharging"`
+	Verified   psqlDate     `json:"verified"`
 }
 
 func New(
@@ -59,8 +60,8 @@ func New(
 	_occupancy int,
 	_capacity int,
 	_notes string,
-	_verified bool,
 	_evCharging bool,
+	_verified time.Time,
 ) *Lot {
 	return &Lot{
 		lotID:      _uuid,
@@ -75,8 +76,8 @@ func New(
 		Occupancy:  _occupancy,
 		Capacity:   _capacity,
 		Notes:      _notes,
-		Verified:   _verified,
 		EvCharging: _evCharging,
+		Verified:   psqlDate(_verified),
 	}
 }
 
@@ -98,8 +99,8 @@ func (l *Lot) ConvertToInternalLot() *InternalLot {
 		Occupancy:  l.Occupancy,
 		Capacity:   l.Capacity,
 		Notes:      l.Notes,
-		Verified:   l.Verified,
 		EvCharging: l.EvCharging,
+		Verified:   l.Verified,
 	}
 }
 
@@ -131,5 +132,28 @@ func (t *psqlTime) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	*t = psqlTime(parsedTime)
+	return nil
+}
+
+func (d *psqlDate) FormatAsPSQLDate() string {
+	return time.Time(*d).Format(time.DateOnly)
+}
+
+func (d *psqlDate) MarshalJSON() ([]byte, error) {
+	stringDate := time.Time(*d).Format(time.DateOnly)
+	return json.Marshal(stringDate)
+}
+
+func (d *psqlDate) UnmarshalJSON(b []byte) error {
+	var stringDate string
+	err := json.Unmarshal(b, &stringDate)
+	if err != nil {
+		return err
+	}
+	parsedDate, err := time.Parse(time.DateOnly, stringDate)
+	if err != nil {
+		return err
+	}
+	*d = psqlDate(parsedDate)
 	return nil
 }
