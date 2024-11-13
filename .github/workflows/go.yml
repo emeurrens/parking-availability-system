@@ -7,6 +7,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+    DATABASE_URL : "postgres://joe:MgwIxXDkYcwqhfcD9oOc@ec2-3-143-172-128.us-east-2.compute.amazonaws.com/burrow?sslmode=disable"
+
 jobs:
 
   build:
