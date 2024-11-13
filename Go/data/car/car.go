@@ -14,7 +14,7 @@ type InternalCar struct {
 
 type Car struct {
 	carID         uuid.UUID
-	License_plate string         `json:"plate"`
+	License_plate string         `json:"license_plate"`
 	Color         sql.NullString `json:"color"`
 }
 
