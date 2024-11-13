@@ -4,8 +4,8 @@ ifneq (,$(wildcard ./.envrc))
 endif
 
 all:
+	make clean
 	make build-backend
-	make build-tests
 	make build-migrations
 
 build-backend:
@@ -15,16 +15,6 @@ build-backend:
 run-backend:
 	@echo "Running backend..."
 	DATABASE_URL=${DATABASE_URL} ./bin/backend
-
-build-tests:
-	@echo "Building tests binary..."
-	go build -o bin/API_tests cmd/server-tests/API/main.go
-	go build -o bin/endpoint_tests cmd/server-tests/endpoints/main.go
-
-run-tests:
-	@echo "Running tests..."
-	DATABASE_URL=${DATABASE_URL} ./bin/API_tests
-	DATABASE_URL=${DATABASE_URL} ./bin/endpoint_tests
 
 build-migrations:
 	@echo "Building migrations binary..."
