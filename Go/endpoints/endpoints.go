@@ -31,7 +31,6 @@ func GetCar(c *gin.Context) {
 		c.JSON(404, gin.H{"error": "Unable to Get Car", "error_message": err.Error()})
 		return
 	}
-
 	c.IndentedJSON(200, retCar)
 }
 
