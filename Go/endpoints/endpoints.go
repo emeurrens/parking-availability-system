@@ -31,6 +31,7 @@ func GetCar(c *gin.Context) {
 		c.JSON(404, gin.H{"error": "Unable to Get Car", "error_message": err.Error()})
 		return
 	}
+
 	c.IndentedJSON(200, retCar)
 }
 
@@ -55,6 +56,7 @@ func SaveCar(c *gin.Context) {
 		uuid,
 		reqCar.License_plate,
 		reqCar.Color.String,
+		reqCar.GetLotID(),
 	)
 
 	err = data.SaveCar(saveCar, &prodDB)
@@ -142,6 +144,7 @@ func UpdateCar(c *gin.Context) {
 		reqCar.CarID,
 		reqCar.License_plate,
 		reqCar.Color.String,
+		reqCar.LotID,
 	)
 	err = data.UpdateCar(updateCar, &prodDB)
 	if err != nil {

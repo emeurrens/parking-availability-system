@@ -13,7 +13,7 @@ import (
 func generateSQLCar(queryType string, vehicle *car.Car, uuid *string) string {
 	switch queryType {
 	case "save":
-		return fmt.Sprintf("INSERT INTO cars(carid, plate, color) VALUES('%s', '%s', '%s')", vehicle.GetID(), vehicle.License_plate, vehicle.Color.String)
+		return fmt.Sprintf("INSERT INTO cars(carid, plate, color, lotid) VALUES('%s', '%s', '%s', '%s')", vehicle.GetID(), vehicle.License_plate, vehicle.Color.String, vehicle.GetLotID())
 	case "get":
 		return fmt.Sprintf("SELECT * FROM cars WHERE carid = '%s'", *uuid)
 	case "getAll":
@@ -58,7 +58,7 @@ func GetCar(_uuid uuid.UUID, db *Database) (vehicle *car.Car, err error) {
 	uuidStr := _uuid.String()
 	sql := generateSQLCar("get", nil, &uuidStr)
 
-	var carId uuid.UUID
+	var carId, lotId uuid.UUID
 	var license_plate, color string
 
 	row := db.DB.QueryRow(sql)
@@ -66,6 +66,7 @@ func GetCar(_uuid uuid.UUID, db *Database) (vehicle *car.Car, err error) {
 		&carId,
 		&license_plate,
 		&color,
+		&lotId,
 	)
 	if err != nil {
 		return nil, err
@@ -75,6 +76,7 @@ func GetCar(_uuid uuid.UUID, db *Database) (vehicle *car.Car, err error) {
 		carId,
 		license_plate,
 		color,
+		lotId,
 	)
 	return vehicle, err
 }
@@ -89,13 +91,14 @@ func GetAllCars(db *Database) (vehicles []*car.Car, err error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var carId uuid.UUID
+		var carId, lotId uuid.UUID
 		var license_plate, color string
 
 		err = rows.Scan(
 			&carId,
 			&license_plate,
 			&color,
+			&lotId,
 		)
 		if err != nil {
 			panic(err)
@@ -105,6 +108,7 @@ func GetAllCars(db *Database) (vehicles []*car.Car, err error) {
 			carId,
 			license_plate,
 			color,
+			lotId,
 		)
 		vehicles = append(vehicles, vehicle)
 	}
