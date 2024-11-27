@@ -116,7 +116,15 @@ func TestGetAllCars(t *testing.T) {
 	router := gin.Default()
 	router.GET("/getAllCars", GetAllCars)
 
-	req, _ := http.NewRequest("GET", "/getAllCars", nil)
+	type getAllCarsReq struct {
+		LotID uuid.UUID `json:"LotID"`
+	}
+	getAllReq := getAllCarsReq{
+		LotID: testLotUUID,
+	}
+
+	jsonValue, _ := json.Marshal(getAllReq)
+	req, _ := http.NewRequest("GET", "/getAllCars", bytes.NewBuffer(jsonValue))
 
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)

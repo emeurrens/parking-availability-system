@@ -8,10 +8,10 @@ import (
 )
 
 type InternalCar struct {
-	CarID         uuid.UUID      `json:"CarID"`
-	License_plate string         `json:"license_plate"`
-	Color         sql.NullString `json:"color"`
-	LotID         uuid.UUID      `json:"LotID"`
+	CarID         uuid.UUID      `json:"CarID,omitempty"`
+	License_plate string         `json:"license_plate,omitempty"`
+	Color         sql.NullString `json:"color,omitempty"`
+	LotID         uuid.UUID      `json:"LotID,omitempty"`
 }
 
 type Car struct {

@@ -51,7 +51,7 @@ func TestGetAllCars(t *testing.T) {
 	db := setupTestDB()
 	defer db.DB.Close()
 
-	vehicles, err := GetAllCars(db)
+	vehicles, err := GetAllCars(testLotUUID, db)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, vehicles)
 }

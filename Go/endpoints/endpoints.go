@@ -103,7 +103,36 @@ func GetAllCars(c *gin.Context) {
 	}
 	defer prodDB.DB.Close()
 
-	cars, err := data.GetAllCars(&prodDB)
+	var reqCar car.InternalCar
+
+	err := c.BindJSON(&reqCar)
+	if err != nil {
+		c.JSON(400, gin.H{"error": "Invalid Lot ID"})
+		return
+	}
+
+	cars, err := data.GetAllCars(reqCar.LotID, &prodDB)
+
+	reqCars := make([]car.InternalCar, len(cars))
+	for i, car := range cars {
+		reqCars[i] = *car.ConvertToInternalCar()
+	}
+
+	if err != nil {
+		c.JSON(404, gin.H{"error": "Unable to Get All Cars", "error_message": err.Error()})
+		return
+	}
+	c.IndentedJSON(200, reqCars)
+}
+
+func GetAllCars_dev(c *gin.Context) {
+	var prodDB data.Database = data.Database{
+		DB:   data.GetDB("", "", "", "", "", "", 0),
+		Name: "prod",
+	}
+	defer prodDB.DB.Close()
+
+	cars, err := data.GetAllCars_dev(&prodDB)
 
 	reqCars := make([]car.InternalCar, len(cars))
 	for i, car := range cars {
