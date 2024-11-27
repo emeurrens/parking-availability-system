@@ -18,7 +18,7 @@ func TestSaveCar(t *testing.T) {
 	defer db.DB.Close()
 
 	newUUID := uuid.New()
-	vehicle := car.New(newUUID, "ABC123", "Red")
+	vehicle := car.New(newUUID, "ABC123", "Red", testLotUUID)
 	err := SaveCar(vehicle, db)
 	assert.NoError(t, err)
 
@@ -27,6 +27,7 @@ func TestSaveCar(t *testing.T) {
 	assert.Equal(t, newUUID, savedCar.GetID())
 	assert.Equal(t, vehicle.License_plate, savedCar.License_plate)
 	assert.Equal(t, vehicle.Color.String, savedCar.Color.String)
+	assert.Equal(t, testLotUUID, savedCar.GetLotID())
 
 	defer func() {
 		err = DeleteCar(newUUID, db)
@@ -43,13 +44,14 @@ func TestGetCar(t *testing.T) {
 	assert.Equal(t, testCarUUID, savedCar.GetID())
 	assert.Equal(t, "TEST-CAR", savedCar.License_plate)
 	assert.Equal(t, "TEST-COLOR", savedCar.Color.String)
+	assert.Equal(t, testLotUUID, savedCar.GetLotID())
 }
 
 func TestGetAllCars(t *testing.T) {
 	db := setupTestDB()
 	defer db.DB.Close()
 
-	vehicles, err := GetAllCars(db)
+	vehicles, err := GetAllCars(testLotUUID, db)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, vehicles)
 }
@@ -66,7 +68,7 @@ func TestDeleteCar(t *testing.T) {
 	assert.Nil(t, savedCar)
 
 	defer func() {
-		vehicle := car.New(testCarUUID, "TEST-CAR", "TEST-COLOR")
+		vehicle := car.New(testCarUUID, "TEST-CAR", "TEST-COLOR", testLotUUID)
 		err = SaveCar(vehicle, db)
 		assert.NoError(t, err)
 	}()
@@ -76,7 +78,7 @@ func TestUpdateCar(t *testing.T) {
 	db := setupTestDB()
 	defer db.DB.Close()
 
-	vehicle := car.New(testCarUUID, "XYZ789", "Blue")
+	vehicle := car.New(testCarUUID, "XYZ789", "Blue", uuid.Nil)
 	err := UpdateCar(vehicle, db)
 	assert.NoError(t, err)
 
@@ -86,7 +88,7 @@ func TestUpdateCar(t *testing.T) {
 	assert.Equal(t, "Blue", updatedCar.Color.String)
 
 	defer func() {
-		vehicle := car.New(testCarUUID, "TEST-CAR", "TEST-COLOR")
+		vehicle := car.New(testCarUUID, "TEST-CAR", "TEST-COLOR", uuid.Nil)
 		err = UpdateCar(vehicle, db)
 		assert.NoError(t, err)
 	}()

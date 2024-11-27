@@ -38,6 +38,7 @@ func TestGetCar(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &returnCar)
 	assert.Equal(t, "TEST-CAR", returnCar.License_plate)
 	assert.Equal(t, "TEST-COLOR", returnCar.Color.String)
+	assert.Equal(t, testLotUUID, returnCar.LotID)
 }
 
 func TestSaveCar(t *testing.T) {
@@ -48,6 +49,7 @@ func TestSaveCar(t *testing.T) {
 		uuid.New(),
 		"ABC123",
 		"Red",
+		testLotUUID,
 	)
 	jsonValue, _ := json.Marshal(reqCar)
 	req, _ := http.NewRequest("POST", "/saveCar", bytes.NewBuffer(jsonValue))
@@ -104,7 +106,7 @@ func TestDeleteCar(t *testing.T) {
 			}
 			defer db.DB.Close()
 
-			undoDeleteCar := car.New(testCarUUID, "TEST-CAR", "TEST-COLOR")
+			undoDeleteCar := car.New(testCarUUID, "TEST-CAR", "TEST-COLOR", testLotUUID)
 			data.SaveCar(undoDeleteCar, &db)
 		}
 	}()
@@ -114,7 +116,15 @@ func TestGetAllCars(t *testing.T) {
 	router := gin.Default()
 	router.GET("/getAllCars", GetAllCars)
 
-	req, _ := http.NewRequest("GET", "/getAllCars", nil)
+	type getAllCarsReq struct {
+		LotID uuid.UUID `json:"LotID"`
+	}
+	getAllReq := getAllCarsReq{
+		LotID: testLotUUID,
+	}
+
+	jsonValue, _ := json.Marshal(getAllReq)
+	req, _ := http.NewRequest("GET", "/getAllCars", bytes.NewBuffer(jsonValue))
 
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
@@ -136,6 +146,7 @@ func TestUpdateCar(t *testing.T) {
 			String: "Blue",
 			Valid:  true,
 		},
+		LotID: uuid.Nil,
 	}
 	jsonValue, _ := json.Marshal(reqCar)
 	req, _ := http.NewRequest("PUT", "/updateCar", bytes.NewBuffer(jsonValue))
@@ -161,6 +172,7 @@ func TestUpdateCar(t *testing.T) {
 				testCarUUID,
 				"TEST-CAR",
 				"TEST-COLOR",
+				uuid.Nil,
 			)
 			data.UpdateCar(carUpdate, &db)
 		}

@@ -13,10 +13,12 @@ import (
 func generateSQLCar(queryType string, vehicle *car.Car, uuid *string) string {
 	switch queryType {
 	case "save":
-		return fmt.Sprintf("INSERT INTO cars(carid, plate, color) VALUES('%s', '%s', '%s')", vehicle.GetID(), vehicle.License_plate, vehicle.Color.String)
+		return fmt.Sprintf("INSERT INTO cars(carid, plate, color, lotid) VALUES('%s', '%s', '%s', '%s')", vehicle.GetID(), vehicle.License_plate, vehicle.Color.String, vehicle.GetLotID())
 	case "get":
 		return fmt.Sprintf("SELECT * FROM cars WHERE carid = '%s'", *uuid)
 	case "getAll":
+		return fmt.Sprintf("SELECT * FROM cars WHERE lotid = '%s'", vehicle.GetLotID())
+	case "getAll_dev":
 		return "SELECT * FROM cars"
 	case "delete":
 		return fmt.Sprintf("DELETE FROM cars WHERE carid = '%s'", *uuid)
@@ -58,7 +60,7 @@ func GetCar(_uuid uuid.UUID, db *Database) (vehicle *car.Car, err error) {
 	uuidStr := _uuid.String()
 	sql := generateSQLCar("get", nil, &uuidStr)
 
-	var carId uuid.UUID
+	var carId, lotId uuid.UUID
 	var license_plate, color string
 
 	row := db.DB.QueryRow(sql)
@@ -66,6 +68,7 @@ func GetCar(_uuid uuid.UUID, db *Database) (vehicle *car.Car, err error) {
 		&carId,
 		&license_plate,
 		&color,
+		&lotId,
 	)
 	if err != nil {
 		return nil, err
@@ -75,12 +78,14 @@ func GetCar(_uuid uuid.UUID, db *Database) (vehicle *car.Car, err error) {
 		carId,
 		license_plate,
 		color,
+		lotId,
 	)
 	return vehicle, err
 }
 
-func GetAllCars(db *Database) (vehicles []*car.Car, err error) {
-	sql := generateSQLCar("getAll", nil, nil)
+func GetAllCars(lotID uuid.UUID, db *Database) (vehicles []*car.Car, err error) {
+	vehicle := car.New(uuid.Nil, "", "", lotID)
+	sql := generateSQLCar("getAll", vehicle, nil)
 
 	rows, err := db.DB.Query(sql)
 	if err != nil {
@@ -89,13 +94,14 @@ func GetAllCars(db *Database) (vehicles []*car.Car, err error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var carId uuid.UUID
+		var carId, lotId uuid.UUID
 		var license_plate, color string
 
 		err = rows.Scan(
 			&carId,
 			&license_plate,
 			&color,
+			&lotId,
 		)
 		if err != nil {
 			panic(err)
@@ -105,6 +111,41 @@ func GetAllCars(db *Database) (vehicles []*car.Car, err error) {
 			carId,
 			license_plate,
 			color,
+			lotId,
+		)
+		vehicles = append(vehicles, vehicle)
+	}
+	return vehicles, err
+}
+
+func GetAllCars_dev(db *Database) (vehicles []*car.Car, err error) {
+	sql := generateSQLCar("getAll_dev", nil, nil)
+
+	rows, err := db.DB.Query(sql)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var carId, lotId uuid.UUID
+		var license_plate, color string
+
+		err = rows.Scan(
+			&carId,
+			&license_plate,
+			&color,
+			&lotId,
+		)
+		if err != nil {
+			panic(err)
+		}
+
+		vehicle := car.New(
+			carId,
+			license_plate,
+			color,
+			lotId,
 		)
 		vehicles = append(vehicles, vehicle)
 	}
