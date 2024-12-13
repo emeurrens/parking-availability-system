@@ -19,7 +19,7 @@ def model_track():
         success, frame = cap.read()
 
         if success:
-            results = model.track(frame, persist=True, conf=0.6, verbose=False)
+            results = model.track(frame, persist=True, conf=0.6, iou=0.5, tracker="bytetrack.yaml", verbose=False)
 
             annotated_frame = results[0].plot()
             cv2.imshow("YOLO11 License Plate Detection", annotated_frame)
@@ -42,8 +42,19 @@ def model_track():
 
     cap.release()
     cv2.destroyAllWindows()
-    shutil.rmtree("ALPR/detections")
+    empty_folder("ALPR/detections")
 
+
+def empty_folder(folder):
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 def main():
     model_track()

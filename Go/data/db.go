@@ -23,7 +23,8 @@ func MustGetEnv(key string) string {
 
 func GetDB(dbName, dbUser, dbPassword, dbHost, dbEndpoint, region string, dbPort int) *sql.DB {
 
-	var connString = MustGetEnv("DATABASE_URL")
+	//var connString = MustGetEnv("DATABASE_URL")
+	var connString = "postgres://joe:MgwIxXDkYcwqhfcD9oOc@ec2-3-143-172-128.us-east-2.compute.amazonaws.com/burrow?sslmode=disable"
 
 	db, err := sql.Open("postgres", connString)
 	if err != nil {
