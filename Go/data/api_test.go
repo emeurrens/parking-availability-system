@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var testCarUUID uuid.UUID = uuid.Must(uuid.Parse("24028284-8201-4c49-87b1-6b81d54b18c5"))
-var testLotUUID uuid.UUID = uuid.Must(uuid.Parse("f24dacb0-9513-45d9-90f8-b07e5dee5271"))
+var testCarUUID uuid.UUID = uuid.Must(uuid.Parse("612ba1d9-4bfd-49a3-9f17-eacdb8f0106c"))
+var testLotUUID uuid.UUID = uuid.Must(uuid.Parse("2ff7015c-e86f-485c-96ab-d74b4caed297"))
 
 func TestSaveCar(t *testing.T) {
 	db := setupTestDB()

@@ -17,17 +17,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var testCarUUID uuid.UUID = uuid.Must(uuid.Parse("24028284-8201-4c49-87b1-6b81d54b18c5"))
-var testLotUUID uuid.UUID = uuid.Must(uuid.Parse("f24dacb0-9513-45d9-90f8-b07e5dee5271"))
+var testCarUUID uuid.UUID = uuid.Must(uuid.Parse("612ba1d9-4bfd-49a3-9f17-eacdb8f0106c"))
+var testLotUUID uuid.UUID = uuid.Must(uuid.Parse("2ff7015c-e86f-485c-96ab-d74b4caed297"))
 
 func TestGetCar(t *testing.T) {
 	router := gin.Default()
 	router.GET("/getCar", GetCar)
 
-	reqCar := car.InternalCar{CarID: testCarUUID}
-	jsonValue, _ := json.Marshal(reqCar)
-	req, _ := http.NewRequest("GET", "/getCar", bytes.NewBuffer(jsonValue))
-	req.Header.Set("Content-Type", "application/json")
+	carID := testCarUUID.String()
+	req, _ := http.NewRequest("GET", "/getCar?id="+carID, nil)
 
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
@@ -183,27 +181,8 @@ func TestGetLot(t *testing.T) {
 	router := gin.Default()
 	router.GET("/getLot", GetLot)
 
-	// This is all useless filler info needed to parse the request into a JSON form
-	beforeConvLot := lot.New(
-		testLotUUID,
-		0,
-		0,
-		"",
-		"",
-		time.Now(),
-		time.Now(),
-		[]string{},
-		[]string{},
-		0,
-		0,
-		"",
-		false,
-		time.Now(),
-	)
-	reqLot := beforeConvLot.ConvertToInternalLot()
-	jsonValue, _ := json.Marshal(reqLot)
-	req, _ := http.NewRequest("GET", "/getLot", bytes.NewBuffer(jsonValue))
-	req.Header.Set("Content-Type", "application/json")
+	lotID := testLotUUID.String()
+	req, _ := http.NewRequest("GET", "/getLot?id="+lotID, nil)
 
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)

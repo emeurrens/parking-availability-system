@@ -16,17 +16,16 @@ func GetCar(c *gin.Context) {
 		Name: "prod",
 	}
 	defer prodDB.DB.Close()
+	carID := c.Query("id")
 
-	var reqCar car.InternalCar
-
-	err := c.BindJSON(&reqCar)
-
-	if err != nil {
-		c.JSON(400, gin.H{"error": "Invalid Car ID"})
+	if carID == "" {
+		c.JSON(400, gin.H{"error": "Valid Car ID is required"})
 		return
 	}
 
-	retCar, err := data.GetCar(reqCar.CarID, &prodDB)
+	reqID := uuid.Must(uuid.Parse(carID))
+
+	retCar, err := data.GetCar(reqID, &prodDB)
 	if err != nil {
 		c.JSON(404, gin.H{"error": "Unable to Get Car", "error_message": err.Error()})
 		return
@@ -188,17 +187,16 @@ func GetLot(c *gin.Context) {
 		Name: "prod",
 	}
 	defer prodDB.DB.Close()
+	lotID := c.Query("id")
 
-	var reqLot lot.InternalLot
-
-	err := c.BindJSON(&reqLot)
-
-	if err != nil {
-		c.JSON(400, gin.H{"error": "Invalid Lot ID"})
+	if lotID == "" {
+		c.JSON(400, gin.H{"error": "Valid Lot ID is required"})
 		return
 	}
 
-	retLot, err := data.GetLot(reqLot.LotID, &prodDB)
+	reqID := uuid.Must(uuid.Parse(lotID))
+
+	retLot, err := data.GetLot(reqID, &prodDB)
 	if err != nil {
 		c.JSON(404, gin.H{"error": "Unable to Get Lot", "error_message": err.Error()})
 		return
