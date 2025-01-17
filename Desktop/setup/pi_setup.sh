@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#
 # CEN4908C - Computer Engineering Design 2
 # Project: Parking Availability System 
 #
@@ -9,10 +8,9 @@
 # Description:
 #	Utilizing a fresh Raspberry Pi OS image installed onto a Raspberry Pi 3 Model B+ or greater,
 # 	configures the development environment and installs dependencies and packages needed to
-#	run the middleware developed in the GitHub repository
-#
+#	run the middleware developed in the GitHub repository.
 
-setup(){
+setup() {
 	# Configure the Pi to connect to the UF network
 	echo "Attempting to connect to UF WiFi . . ."
 	sh SecureW2_JoinNow.run
@@ -39,9 +37,9 @@ setup(){
 	# https://forums.raspberrypi.com/viewtopic.php?t=21632
 	sudo raspi-config nonint do_boot_behaviour B1
 	sudo raspi-config nonint do_boot_splash 0
-	# TODO: Add settings from OS imager just in case
 	sudo raspi-config nonint do_ssh 1
 	sudo raspi-config nonint do_vnc 1
+	# TODO: Add additional settings from OS imager just in case
 	# TODO: Add config file changes 
 	# TODO: Test on virgin Pi
 	
@@ -49,7 +47,7 @@ setup(){
 }
 
 main() {
-	echo "Running Pi setup script . . ."
+	echo "Running Pi setup script. This will restart the device when finished."
 	# Run setup function
 	setup
 	# Restart for changes
