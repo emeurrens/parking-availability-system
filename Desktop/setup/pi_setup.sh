@@ -36,9 +36,9 @@ setup() {
 	# https://github.com/raspberrypi-ui/rc_gui/blob/master/src/rc_gui.c#L23-L70
 	# https://forums.raspberrypi.com/viewtopic.php?t=21632
 	sudo raspi-config nonint do_boot_behaviour B1
-	sudo raspi-config nonint do_boot_splash 0
-	sudo raspi-config nonint do_ssh 1
-	sudo raspi-config nonint do_vnc 1
+	sudo raspi-config nonint do_boot_splash 1
+	sudo raspi-config nonint do_ssh 0
+	sudo raspi-config nonint do_vnc 0
 	# TODO: Add additional settings from OS imager just in case
 	# TODO: Add config file changes 
 	# TODO: Test on virgin Pi
