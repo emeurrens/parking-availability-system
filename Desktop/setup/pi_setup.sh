@@ -42,7 +42,14 @@ setup() {
 	# TODO: Add additional settings from OS imager just in case
 	# TODO: Add config file changes 
 	# TODO: Test on virgin Pi
-	
+
+ 	echo "Creating virtual environment . . ."
+  	python -m venv car_detection
+   	echo "Activation virtual environment . . ."
+   	cd car_detection
+    	. bin/activate 
+     	echo "Installing necessary packages to make inferences on camera feed . . ."
+	pip install opencv-python torchvision torch git+https://github.com/ultralytics/ultralytics.git@main 
 	# Add additional commands and behaviors below	
 }
 
