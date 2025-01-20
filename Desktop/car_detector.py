@@ -7,13 +7,13 @@ except Exception as e:
 
 try:
     results = model('dataset-card.jpg')
+    # ultralytics documentation covers how to observe inferences, taken from ultralytics page
     for result in results:
-        boxes = result.boxes  # Boxes object for bounding box outputs
-        masks = result.masks  # Masks object for segmentation masks outputs
-        keypoints = result.keypoints  # Keypoints object for pose outputs
-        probs = result.probs  # Probs object for classification outputs
-        obb = result.obb  # Oriented boxes object for OBB outputs
-        # result.show()  # display to screen
-        result.save(filename="result.jpg")  # save to disk
+        boxes = result.boxes  
+        masks = result.masks  
+        keypoints = result.keypoints 
+        probs = result.probs  
+        obb = result.obb  
+        result.save(filename="result.jpg")
 except Exception as e:
     print(e)
