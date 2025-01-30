@@ -1,45 +1,59 @@
-import torch
+  GNU nano 7.2                                                                                                                                                                   test_torch.py                                                                                                                                                                             import torch
 import ultralytics
-import picamera
+from picamera2 import Picamera2, Preview
+from libcamera import controls
 
 from ultralytics import YOLO
 
 def take_pic():
-    camera = picamera.PiCamera()
-    camera.capture('/home/parkings/image.jpg')
+        picam2 = Picamera2()
+        camera_config = picam2.create_still_configuration(main={'size': (1920, 1080)})
+        picam2.configure(camera_config)
+        try:
+                picam2.start()
+        # time.sleep(2) # zzz
+                picam2.capture_file("home/parkings/image.jpg")
+        except Exception as e:
+                print(f"Camera smells like: {e}")
 
 def get_counter():
-    print('get counter val from database')
+        print('get counter val from database')
 
 def update_counter(val):
-    print(val)
-    # send the val to the DB
+        print(val)
+        # send the val to the DB
 
 def main():
-    try:
-            model = YOLO('LPR_detector.pt')
-            print("super awesome model loaded")
-    except Exception as e:
-            print(f"Error loading model: {e}")
-    try:
-            # call take pic method to capture current frame of rpi
-            #take_pic()
-            #results = model('/home/parkings/image.jpg')
+        try:
+                model = YOLO('car_model.pt')
+                model.eval()
+                print("super awesome model loaded")
+        except Exception as e:
+                print(f"Error loading model: {e}")
+        try:
+                # call take pic method to capture current frame of rpi
+                take_pic()
+                results = model('/home/parkings/image.jpg')
 
-            results = model('/home/parkings/car_noplate.jpg')
-            #results = model('/home/parkings/car.jpg')
+                #results = model('/home/parkings/car_noplate.jpg')
+                #results = model('/home/parkings/car.jpg')
 
-            for result in results:
-                    names = model.names
-                    detections = result.boxes
-                    print(result.boxes.data.shape[0])
-                    if result.boxes.data.shape[0] > 0:
-                            print("THERE IS A LICENSE PLATE!!!! UPDATE THE DATABASE!!!!")
-                            # update the data base
-                    else:
-                            print("This license plate is not bussin!")
+                for result in results:
+                        names = model.names
+                        detections = result.boxes
+                        print(result.boxes.data.shape[0])
+                        if result.boxes.data.shape[0] > 0:
+                                print("THERE IS A LICENSE PLATE!!!! UPDATE THE DATABASE!!!!")
+                                # update the data base
+                        else:
+                                print("This license plate is not bussin!")
 
-                    result.save(filename='result.jpg')
-    except Exception as e:
-            print(e)
+                        result.save(filename='result.jpg')
+        except Exception as e:
+                print(e)
+
+if __name__ == "__main__":
+        main()
+
+
 
