@@ -1,4 +1,4 @@
-  GNU nano 7.2                                                                                                                                                                   test_torch.py                                                                                                                                                                             import torch
+                                                                                                                                                           test_torch.py                                                                                                                                                                             import torch
 import ultralytics
 from picamera2 import Picamera2, Preview
 from libcamera import controls
