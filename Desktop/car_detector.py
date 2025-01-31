@@ -1,4 +1,4 @@
-                                                                                                                                                           test_torch.py                                                                                                                                                                             import torch
+import torch
 import ultralytics
 from picamera2 import Picamera2, Preview
 from libcamera import controls
@@ -25,7 +25,7 @@ def update_counter(val):
 
 def main():
         try:
-                model = YOLO('car_model.pt')
+                model = YOLO('LPR_detector.pt')
                 model.eval()
                 print("super awesome model loaded")
         except Exception as e:
@@ -33,7 +33,7 @@ def main():
         try:
                 # call take pic method to capture current frame of rpi
                 take_pic()
-                results = model('/home/parkings/image.jpg')
+                results = model('/home/pi/detector/parking-availability-system/Desktop/dataset-card.jpg')
 
                 #results = model('/home/parkings/car_noplate.jpg')
                 #results = model('/home/parkings/car.jpg')
