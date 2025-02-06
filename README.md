@@ -14,6 +14,16 @@ There are multiple comparable existing devices from various vendors used to moni
 - Compact, camera-based edge device 
 - Real-time parking information on mobile app
 
+## Alpha Build Completed Work:
+- Researched, Planned, and Decided on Solution to WiFi Coverage Sparsity
+  - Identified potential solutions: LTE modem, LoRa, Repeater
+  - Will design an ESP32 repeater to get Raspberry Pi modules onto the UF network for Beta Build
+- Configuration script
+  - Used to automate the process of configuration new or reset Raspberry Pi's with a fresh operating system
+- Raspberry Pi Object Detection model
+  - Connected to object detection pipeline to AWS backend, finally linking all components together via a shared connection to the backend
+  - Still need to work on caching images, tracking, and testing performance
+
 ## Design Prototype Completed Work:
 - AWS Backend
   - Lots/cars API implemented and functional
