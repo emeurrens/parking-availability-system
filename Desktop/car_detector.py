@@ -12,7 +12,8 @@ def take_pic():
         try:
                 picam2.start()
         # time.sleep(2) # zzz
-                picam2.capture_file("home/parkings/image.jpg")
+                picam2.capture_file("image.jpg")
+                picam2.stop()
         except Exception as e:
                 print(f"Camera smells like: {e}")
 
@@ -33,8 +34,8 @@ def main():
         try:
                 # call take pic method to capture current frame of rpi
                 take_pic()
-                results = model('/home/pi/detector/parking-availability-system/Desktop/dataset-card.jpg')
-
+                #results = model('/home/parkings/parking-availability-system/Desktop/dataset-card.jpg')
+                results = model('/home/parkings/parking-availability-system/Desktop/image.jpg')
                 #results = model('/home/parkings/car_noplate.jpg')
                 #results = model('/home/parkings/car.jpg')
 
