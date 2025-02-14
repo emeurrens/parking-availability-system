@@ -208,8 +208,9 @@ main() {
 			echo
 			echo "Restarting device to complete setup . . . "
 			echo
-			sudo rm -rf tmp 
+			sudo rm -f "$LOCAL_PATH/setup_checkpoint" 
 		else
+			sudo rm -f "$LOCAL_PATH/setup_checkpoint"
 			die "User chose to terminate setup script prior to completion"
 		fi
 	else
