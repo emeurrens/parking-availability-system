@@ -3,7 +3,7 @@
 # CEN4908C - Computer Engineering Design 2
 # Project: Parking Availability System 
 #
-# Last modified: 02/13/25
+# Last modified: 02/14/25
 #
 # Description:
 #	Utilizing a fresh Raspberry Pi OS image installed onto a Raspberry Pi 3 Model B+ or greater,
@@ -26,7 +26,8 @@ die() {
 	exit 1
 }
 
-setup() {
+# Pre-reboot setup function
+setup_1() {
 	# Set current working directory
 	cd $LOCAL_PATH
 
@@ -34,7 +35,8 @@ setup() {
 	# Configure the Pi to connect to the UF network
 	###############################################
 	echo "Attempting to connect to UF WiFi . . . "
-
+	sudo nmcli device wifi rescan ifname wlan0
+	
 	# Check if there already exists an eduroam connection
 	if nmcli connection show | grep --silent "eduroam"
 	then
@@ -83,7 +85,7 @@ setup() {
 	echo "Updating package list . . ." && \
 	sudo apt -y -o Acquire::ForceIPv4=true update && \
 	echo && \
-	echo "Updating existing packages . . . " && \
+	echo "Upgrading existing packages . . . " && \
 	sudo apt -y -o Acquire::ForceIPv4=true upgrade && \
 	echo && \
 	echo "Installing packages . . . " && \
@@ -96,7 +98,10 @@ setup() {
 	then
 		die "ERROR: Failed to install dependencies and packages through APT package manager"
 	fi
-	
+}
+
+# Post-reboot setup function
+setup_2() {
 	####################################
 	# Configure USB wifi antenna adapter
 	####################################
@@ -135,6 +140,7 @@ setup() {
 		# If current device is in list of devices, install drivers, otherwise don't bother
 		if cat ./supported-device-IDs | grep -i --silent "$device_id"
 		then 
+			echo
 			sudo ./install-driver.sh
 			cd .. 
 		else
@@ -145,7 +151,6 @@ setup() {
 	else
 		echo "Skipping USB WiFi antenna adapter configuration"
 	fi
-
 	
 	###########################################################################################
 	# Configuring Raspberry Pi settings
@@ -178,6 +183,7 @@ setup() {
 	# Creating virtual environment for Python libraries
 	###################################################
 	cd ..
+	echo
  	echo "Creating virtual environment . . ."
   	python -m venv car_detection
    	echo "Activating virtual environment . . ."
@@ -189,10 +195,33 @@ setup() {
 
 main() {
 	echo
-	echo "Running Pi setup script. This will restart the device when finished."
-	echo
+	echo "Running Pi setup script . . . "
+
 	# Run setup function
-	setup
+	if [ -f "$LOCAL_PATH/setup_checkpoint" ]
+	then
+		echo
+		read -p "A checkpoint from a previous setup session was detected. Would you like to continue? [Y/n]: " cont_response
+		if [[ $cont_response != "n" ]]
+		then
+			setup_2
+			echo
+			echo "Restarting device to complete setup . . . "
+			echo
+			sudo rm -rf tmp 
+		else
+			die "User chose to terminate setup script prior to completion"
+		fi
+	else
+		echo "This will require multiple restarts."
+		echo 
+		setup_1
+		echo
+		echo "Restarting device to apply updated packages. Please rerun the script when the device restarts to continue . . . "
+		echo
+		echo "$(date)" > $LOCAL_PATH/setup_checkpoint
+	fi
+
 	# Restart for changes
 	sudo reboot
 }
