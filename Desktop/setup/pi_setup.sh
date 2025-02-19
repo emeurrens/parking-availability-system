@@ -185,12 +185,19 @@ setup_2() {
 	cd ..
 	echo
  	echo "Creating virtual environment . . ."
-  	python -m venv car_detection
+  	python -m venv --system-site-packages CarDetectionEnvironment
    	echo "Activating virtual environment . . ."
-   	cd car_detection
+   	cd cd CarDetectionEnvironment 
     	. bin/activate 
+        cd ..
 	echo "Installing necessary packages to make inferences on camera feed . . ."
 	pip install opencv-python torchvision torch git+https://github.com/ultralytics/ultralytics.git@main 
+        pip install ultralytics
+	echo "Installing packages to use RPi 5 camera module . . ."
+	pip install picamera
+ 	sudo apt-get install libcap-dev 
+  	pip install picamera2
+   	sudo apt-get install libcamera-dev 
 }
 
 main() {
