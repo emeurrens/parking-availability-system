@@ -14,12 +14,26 @@ There are multiple comparable existing devices from various vendors used to moni
 - Compact, camera-based edge device 
 - Real-time parking information on mobile app
 
+## Beta Build 
+- Configuration script
+  - Added conditional branches to allow more user control of setup process
+  - Added error control in case of failures in command execution
+  - Sets up eduroam connection given UF credentials
+  - Sets up USB WiFi drivers
+  - Virtual environment and APT command changes
+  - Testing
+- Tested USB WiFi antenna vs on-board antenna performance metrics
+- Tested inference speed of Raspberry Pi and real-world functionality 
+- ESP32 access point configured, missing internet connection
+- Raspberry Pi Housing v2
+
 ## Alpha Build Completed Work:
 - Researched, Planned, and Decided on Solution to WiFi Coverage Sparsity
   - Identified potential solutions: LTE modem, LoRa, Repeater
   - Will design an ESP32 repeater to get Raspberry Pi modules onto the UF network for Beta Build
 - Configuration script
-  - Used to automate the process of configuration new or reset Raspberry Pi's with a fresh operating system
+  - All commands to download and install necessary APT packages to run Pi software
+  - Virtual environment setup initialized
 - Raspberry Pi Object Detection model
   - Connected to object detection pipeline to AWS backend, finally linking all components together via a shared connection to the backend
   - Still need to work on caching images, tracking, and testing performance
@@ -52,7 +66,11 @@ There are multiple comparable existing devices from various vendors used to moni
 - Mobile App
   - Can establish a connection with PostgreSQL database from within app
 
-## Bugs:
+## Bugs / Issues:
+- **Blurry real-time photo quality on moving objects.**
+  - Likely a product of overexposure from slow shutter speed
+- **Updates to Lot Entries are recorded in UTC+0 as opposed to UTC+5**
+  - Won't fix, but something to keep in mind.
 - **Inconsistent start-up behavior on app**
   - During certain times, not all parking locations appear on the map. This is the most normal state of the app; however, during certain particular times, all locations appear, and is associated with unexpected behavior when retrieving data from the database. The resolution to this is not known, though one hypothesis is that the app's code for filtering parking locations from the map and list is somehow involved.
 - **Camera turns people blue when viewing live feed**
