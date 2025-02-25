@@ -28,11 +28,14 @@ def take_pic():
             return
 
     try:
-        picam2.capture_file("image.jpg")
+        name = str(time.time())+".jpg"
+        picam2.capture_file(name)
         print("Image captured successfully")
         time.sleep(1)
     except Exception as e:
         print(f"Error capturing image: {e}")
+    return name
+
 
 def get_counter():
         print('get counter val from database')
@@ -51,10 +54,10 @@ def main():
         while (1):
                 try:
                         # call take pic method to capture current frame of rpi
-                        take_pic()
+                        fileName = take_pic()
                         print("image taken")
                         #results = model('/home/parkings/parking-availability-system/Desktop/dataset-card.jpg')
-                        results = model('/home/pi/parking-availability-system/Desktop/image.jpg')
+                        results = model('/home/pi/parking-availability-system/Desktop/'+fileName)
                         #results = model('/home/parkings/car_noplate.jpg')
                         #results = model('/home/parkings/car.jpg')
 
@@ -68,10 +71,10 @@ def main():
                                 else:
                                         print("This license plate is not bussin!")
 
-                                result.save(filename='result.jpg')
-                        userResp = input("Would you like to continue? (True/False)")
-                        if (userResp == "False"):
-                                break
+                                result.save(filename='result'+fileName)
+                        #userResp = input("Would you like to continue? (True/False)")
+                        #if (userResp == "False"):
+                                #break
                 except Exception as e:
                         print(e)
 
