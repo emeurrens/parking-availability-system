@@ -91,7 +91,7 @@ setup_1() {
 	echo "Installing packages . . . " && \
 	sudo apt -y -o Acquire::ForceIPv4=true install python3-numpy python3-matplotlib jupyter-notebook && \
 	sudo apt -y -o Acquire::ForceIPv4=true install openconnect network-manager-openconnect-gnome && \
-	sudo apt -y -o Acquire::ForceIPv4=true install libcap-dev libcamera-dev \
+	sudo apt -y -o Acquire::ForceIPv4=true install libcap-dev libcamera-dev && \
 	echo && \
 	echo "Cleaning up . . . " && \
 	sudo apt -y -o Acquire::ForceIPv4=true autoremove
