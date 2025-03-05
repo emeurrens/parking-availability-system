@@ -91,6 +91,7 @@ setup_1() {
 	echo "Installing packages . . . " && \
 	sudo apt -y -o Acquire::ForceIPv4=true install python3-numpy python3-matplotlib jupyter-notebook && \
 	sudo apt -y -o Acquire::ForceIPv4=true install openconnect network-manager-openconnect-gnome && \
+	sudo apt -y -o Acquire::ForceIPv4=true install libcap-dev libcamera-dev \
 	echo && \
 	echo "Cleaning up . . . " && \
 	sudo apt -y -o Acquire::ForceIPv4=true autoremove
@@ -185,7 +186,7 @@ setup_2() {
 	cd ..
 	echo
  	echo "Creating virtual environment . . ."
-  	python -m venv car_detection
+  	python -m venv --system-site-packages car_detection
    	echo "Activating virtual environment . . ."
    	cd car_detection
     	. bin/activate 

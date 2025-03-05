@@ -1,5 +1,5 @@
-import torch
-import ultralytics
+import os                                       # Used to access os env variables
+import sys                                      # Used to differentiate between 'inflow' and 'outflow' functions
 from picamera2 import Picamera2, Preview
 from libcamera import controls
 import time
@@ -8,7 +8,7 @@ import json
 
 from ultralytics import YOLO
 
-# global falgs for the picamera functionality, need to check if it has already been intialized and if it needs to be stopped
+# global flags for the picamera functionality, need to check if it has already been intialized and if it needs to be stopped
 camera_initialized = False
 picam2 = None  
 pi_configuration = ""
@@ -106,22 +106,22 @@ def getLot(idName):
         print(response.text)
 
 
-def main():
-        try:
-                model = YOLO('LPR_detector.pt')
-                model.eval()
-                print("super awesome model loaded")
-        except Exception as e:
-                print(f"Error loading model: {e}")
+def main(argv):
+        if argv[0] != 'in' and argv[0] != 'out':
+                raise ValueError(f"Must provide argument 'in' or 'out'. Provided '{argv[0]}'")
+        else:
+                global pi_configuration
+                pi_configuration = argv[0]
+        model = YOLO('LPR_detector.pt')
+        model.eval()
+        print("super awesome model loaded")
 
-        global pi_configuration 
-        pi_configuration = input("in/out: ")
         while (1):
                 try:
                         # call take pic method to capture current frame of rpi
                         fileName = take_pic()
                         print("image taken")
-                        results = model('/home/pi/parking-availability-system/Desktop/'+fileName)
+                        results = model(os.getenv('HOME')+'/parking-availability-system/Desktop/'+fileName)
 
                         for result in results:
                                 names = model.names
@@ -142,7 +142,7 @@ def main():
                         print(e)
 
 if __name__ == "__main__":
-        main()
-
-
-
+        if len(sys.argv) != 2:
+                raise TypeError("Missing single positional argument 'in' or 'out'. Example: \"python car_detector.py 'in'\"")
+        else :
+                main(sys.argv[1:])
