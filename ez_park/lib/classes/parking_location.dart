@@ -164,8 +164,8 @@ enum Day {
   wednesday(3, 'W'),
   thursday(4, 'R'),
   friday(5, 'F'),
-  saturday(6, 'S'),
-  sunday(7, 'U');
+  saturday(6, 'Sa'),
+  sunday(7, 'Su');
 
   const Day(this.num, this.abbr);
   final int num;
@@ -186,19 +186,22 @@ const Set<int> weekends = <int>{
 };
 
 class ParkingLocation {
-  late String lotID;                  // lot database ID
-  late String name;
+  late String lotID = "NO_ID";                  // lot database ID
+  late String name = "NO_NAME";
+  late String address = "";
   late LatLng location;
   late TimeOfDay restrictionStart;
   late TimeOfDay restrictionEnd;
   late Set<int> restrictedDays;
   late Set<DecalType> requiredDecals;
-  late int currentOccupancy = -1;     // -1 if PAS not available (IMPORTANT)
+  late int occupancy = -1;     // -1 if PAS not available (IMPORTANT)
+  late int capacity = -1;               // discrete number of lot capacity (may be wrong)
   late bool evCharging = false;
-  late String specialNotes;
-  late bool isVerified = false;       
-  late DateTime dateVerified = DateTime(1901,1,1);
-  late LotSize sizeOfLot;
+  late String specialNotes= "";
+  late bool isVerified = false;
+  late DateTime dateCreated = DateTime(1901,1,1);
+  late DateTime dateUpdated = DateTime(1901,1,1);
+  late LotSize sizeOfLot;             // enum approximating size of lot
 
   ParkingLocation(this.name, this.location, this.restrictionStart,
       this.restrictionEnd, this.restrictedDays, this.requiredDecals);
@@ -211,9 +214,9 @@ class ParkingLocation {
       Set<DecalType> reqDecals,
       LotSize lotSize,
       {bool evCharge = false,
-      String notes = "",
-      bool verified = false,
-      DateTime? dateVerified}) {
+        String notes = "",
+        bool verified = false,
+        DateTime? dateVerified}) {
     name = locName;
     location = loc;
     requiredDecals = reqDecals;
@@ -251,44 +254,48 @@ class ParkingLocation {
   }
 
   ParkingLocation.fromJson(Map<String, dynamic> json) :
-      lotID = json['LotID'] ?? "NO_ID",
-      name = json['name'],
-      location = LatLng(json['latitude'], json['longitude']),
-      restrictionStart = TimeOfDay(hour: int.parse(json['open'].split(':')[0]),
-                                    minute: int.parse(json['open'].split(':')[1])),
-      restrictionEnd = TimeOfDay(hour: int.parse(json['close'].split(':')[0]),
-                                  minute: int.parse(json['close'].split(':')[1])),
-      restrictedDays = json['days'].map((abbr) =>
-                  Day.values.firstWhere((day) => day.abbr == abbr).num).toSet().cast<int>(),
-      requiredDecals = json['decals'].map((name) =>
-                  DecalType.values.firstWhere((type) => type.name == name)).toSet().cast<DecalType>(),
-      currentOccupancy = json['occupancy'],
-      evCharging = json['evCharging'],
-      specialNotes = json['notes'],
-      isVerified = json['verified'] == "1901-01-01" ? false : true,
-      dateVerified = DateTime.parse(json['verified']),
-      sizeOfLot = json['capacity'] >= 500 ? LotSize.large :
-                  json['capacity'] >= 100 ? LotSize.medium :
-                  LotSize.small;
+        lotID = json['id'] ?? "NO_ID",
+        name = json['name'],
+        address = json['address'],
+        location = LatLng(json['latitude']+.0, json['longitude']+.0),
+        restrictionStart = TimeOfDay.fromDateTime(DateTime.parse(json['open'])),
+        restrictionEnd = TimeOfDay.fromDateTime(DateTime.parse(json['close'])),
+        restrictedDays = json['days'].map((abbr) =>
+        Day.values.firstWhere((day) => day.abbr == abbr).num).toSet().cast<int>(),
+        requiredDecals = json['decals'].map((name) =>
+            DecalType.values.firstWhere((type) => type.name == name)).toSet().cast<DecalType>(),
+        occupancy = json['occupancy'],
+        capacity = json['capacity'],
+        evCharging = json['ev_charging'],
+        specialNotes = json['notes'],
+        dateCreated = DateTime.parse(json['created_at']),
+        dateUpdated = DateTime.parse(json['updated_at']),
+        isVerified =  DateTime.parse(json['created_at']).compareTo(DateTime.parse(json['updated_at'])) == 0 ?
+        false
+            :
+        true,
+        sizeOfLot = json['capacity'] >= 500 ? LotSize.large :
+        json['capacity'] >= 100 ? LotSize.medium :
+        LotSize.small
+  ;
 
   Map<String, dynamic> toJson() => {
     'latitude':   location.latitude,
     'longitude':  location.longitude,
     'name':       name,
-    'address':    "",        // Seriously could get rid of this address column
+    'address':    address,
     'open':       "${restrictionStart.hour}:${restrictionStart.minute}:00",
     'close':      "${restrictionEnd.hour}:${restrictionEnd.minute}:00",
     'days':       restrictedDays.map((i) => Day.values[i-1].abbr).toList(),
     'decals':     requiredDecals.map((type) => type.toString()).toList(),
-    'occupancy':  currentOccupancy,
-    'capacity':   sizeOfLot == LotSize.large ? 500 :
-                    sizeOfLot == LotSize.medium ? 100 :
-                    20,
+    'occupancy':  occupancy,
+    'capacity':   capacity == -1 ?
+    sizeOfLot == LotSize.small ? 20 :
+    sizeOfLot == LotSize.medium ? 100 :
+    500 :
+    capacity,
     'evCharging': evCharging,
     'notes':      specialNotes,
-    'verified':   "${dateVerified.year}-"
-                  "${dateVerified.month.toString().padLeft(2,'0')}-"
-                  "${dateVerified.day.toString().padLeft(2,'0')}"
   };
 
   String formatNotes() {
@@ -379,12 +386,12 @@ class ParkingLocation {
 
     return (restrictionStart.hour % 12).toString() +
         ":" +
-        restrictionStart.minute.toString() +
+        restrictionStart.minute.toString().padLeft(2,'0') +
         ampmStart +
         " - " +
         (restrictionEnd.hour % 12).toString() +
         ":" +
-        restrictionEnd.minute.toString() +
+        restrictionEnd.minute.toString().padLeft(2,'0') +
         ampmEnd;
   }
 

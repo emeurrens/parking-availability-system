@@ -194,8 +194,7 @@ class MapSampleState extends State<MapSample> {
   }
 
   Future<void> _getUserLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    Position position = await Geolocator.getCurrentPosition();
     setState(() {
       _userPosition = LatLng(position.latitude, position.longitude);
       _kUserPosition = CameraPosition(
