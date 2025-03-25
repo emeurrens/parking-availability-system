@@ -1,5 +1,5 @@
 import 'package:ez_park/classes/filtered_parking_locations.dart';
-import 'package:ez_park/widgets/OccupancyGauge.dart';
+import 'package:ez_park/widgets/occupancy_gauge.dart';
 import 'package:flutter/material.dart';
 import 'package:map_launcher/map_launcher.dart';
 
@@ -51,7 +51,12 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Image(
+                        if(currentParkingLocations.selectedParkingLocation.occupancy != -1)
+                          OccupancyGauge(
+                            lotName: currentParkingLocations.selectedParkingLocation.name,
+                          )
+                        else
+                          const Image(
                           height: 150,
                           image: NetworkImage(
                               'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Florida_Gators_wordmark.png/640px-Florida_Gators_wordmark.png'),
@@ -141,10 +146,6 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                                   fontSize: 24, fontWeight: FontWeight.normal),
                             ),
                           ],
-                        ),
-                        /// TODO: currentParkingLocations.selectedParkingLocation.currentOccupancy == -1 ?
-                        OccupancyGauge(
-                            lotName: currentParkingLocations.selectedParkingLocation.name
                         ),
                         Container(
                             padding: const EdgeInsets.all(8),

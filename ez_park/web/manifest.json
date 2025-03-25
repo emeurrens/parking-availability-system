@@ -1,11 +1,11 @@
 {
-    "name": "parkings_",
-    "short_name": "parkings_",
+    "name": "ez_park",
+    "short_name": "ez_park",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "A Flutter-based navigation app to help people find parking on the University of Florida campus",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
