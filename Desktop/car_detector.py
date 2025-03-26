@@ -1,5 +1,5 @@
-import os                                       # Used to access os env variables
-import sys                                      # Used to differentiate between 'inflow' and 'outflow' functions
+import os                             
+import sys                                 
 from picamera2 import Picamera2, Preview
 from libcamera import controls
 import time
