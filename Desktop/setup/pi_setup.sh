@@ -3,7 +3,7 @@
 # CEN4908C - Computer Engineering Design 2
 # Project: Parking Availability System 
 #
-# Last modified: 02/14/25
+# Last modified: 03/27/25
 #
 # Description:
 #	Utilizing a fresh Raspberry Pi OS image installed onto a Raspberry Pi 3 Model B+ or greater,
@@ -89,7 +89,7 @@ setup_1() {
 	sudo apt -y -o Acquire::ForceIPv4=true upgrade && \
 	echo && \
 	echo "Installing packages . . . " && \
-	sudo apt -y -o Acquire::ForceIPv4=true install python3-numpy python3-matplotlib jupyter-notebook && \
+	sudo apt -y -o Acquire::ForceIPv4=true install python3-numpy python3-matplotlib python3-pandas jupyter-notebook && \
 	sudo apt -y -o Acquire::ForceIPv4=true install openconnect network-manager-openconnect-gnome && \
 	sudo apt -y -o Acquire::ForceIPv4=true install libcap-dev libcamera-dev && \
 	echo && \
