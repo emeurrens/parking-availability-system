@@ -3,7 +3,7 @@
 # CEN4908C - Computer Engineering Design 2
 # Project: Parking Availability System 
 #
-# Last modified: 02/14/25
+# Last modified: 03/04/25
 #
 # Description:
 #	Utilizing a fresh Raspberry Pi OS image installed onto a Raspberry Pi 3 Model B+ or greater,
