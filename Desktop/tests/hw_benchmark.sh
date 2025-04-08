@@ -3,7 +3,7 @@
 # CEN4908C - Computer Engineering Design 2
 # Project: Parking Availability System 
 #
-# Last modified: 03/27/25
+# Last modified: 04/08/25
 #
 # Description:
 #	Benchmark polling system commands to read core temperature, voltage, frequency, and throttle state over time.
@@ -39,18 +39,27 @@ run_benchmark() {
         FREQ=$(vcgencmd measure_clock arm | grep -o -E [0-9.]+$)     # hertz
         THROTTLE=$(vcgencmd get_throttled | grep -o -E 0x[0-9.]+)    # hex string representing throttle flags
 
-        echo "$TIME,$TEMP,$FREQ,$VOLT,$THROTTLE" >> "$TEST_NAME.csv"
-        
-        # Show loading bar to demonstrate to users that the script is running
-        if (( $count == 5 ))
-        then
-            echo -ne "\r                              \r"
-            count=0
-        else
-            echo -n ". "
-            ((count++))
-        fi
+        echo "$TIME,$TEMP,$FREQ,$VOLT,$THROTTLE" >> "data.csv"
 
+        # Print current data
+        if (( $count > 0))
+        then
+            echo -ne "\033[5A"
+        fi
+        echo -e "\rTemperature: ${TEMP}'C        \nCore Frequency: ${FREQ} Hz     \nVoltage: ${VOLT}V              \nThrottle State: ${THROTTLE}    "
+        echo
+
+        # Show loading bar to demonstrate to users that the script is running
+        # if (( $count == 5 ))
+        # then
+        #     echo -ne "\r                              \r"
+        #     count=0
+        # else
+        #     echo -ne "\033[$(($count*2))C. "
+        #     ((count++))
+        # fi
+
+        ((count++))
         sleep 1
     done
 }
@@ -63,8 +72,8 @@ make_results_files() {
     cd hw_benchmark_results
     mkdir $TEST_NAME
     cd $TEST_NAME
-    touch "$TEST_NAME.csv"
-    echo $CSV_HEADER > "$TEST_NAME.csv"
+    touch "data.csv"
+    echo $CSV_HEADER > "data.csv"
 }
 
 main() {
@@ -76,5 +85,5 @@ main() {
     run_benchmark
 }
 
-trap 'cd $LOCAL_PATH; end_benchmark; exit 0' SIGINT
+trap 'echo; cd $LOCAL_PATH; end_benchmark; exit 0' SIGINT
 main
