@@ -25,8 +25,6 @@ LOCAL_PATH="$HOME/$REPO_NAME/Desktop/setup"
 num_args=$#
 args=$@
 
-
-
 # LMAO something went wrong. IDIOT! Now you die HAHA! (Please don't take this personally)
 # In all seriousness, if you reach this point, you need to rerun the script
 die() {
@@ -220,15 +218,15 @@ setup_2() {
 }
 
 main() {
-	echo
-	echo "Running Pi setup script . . . "
-
 	# Set current working directory
 	cd $LOCAL_PATH
 
 	# Parse args
 	if [[ $num_args -eq 0 ]]
 	then
+		echo
+		echo "Running Pi setup script . . . "
+
 		# Run setup function
 		if [ -f "$LOCAL_PATH/setup_checkpoint" ]
 		then

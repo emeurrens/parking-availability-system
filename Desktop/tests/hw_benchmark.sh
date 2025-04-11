@@ -20,7 +20,7 @@ TEST_NAME="HW_TEST_${START_TIME}"
 CSV_HEADER="TIME,TEMP,CORE_FREQ,CORE_VOLT,THROTTLE_STATE"
 
 end_benchmark() {
-    python3 hw_plot.py "${LOCAL_PATH}/${TEST_NAME}/data.csv"
+    python3 hw_plot.py "${LOCAL_PATH}/hw_benchmark_results/${TEST_NAME}/data.csv"
 }
 
 run_benchmark() {
