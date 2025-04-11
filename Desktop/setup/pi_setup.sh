@@ -3,12 +3,18 @@
 # CEN4908C - Computer Engineering Design 2
 # Project: Parking Availability System 
 #
-# Last modified: 04/08/25
+# Last modified: 04/11/25
 #
 # Description:
 #	Utilizing a fresh Raspberry Pi OS image installed onto a Raspberry Pi 3 Model B+ or greater,
 # 	configures the network connection to UF WiFi, the development environment, and installs dependencies and packages 
 #	needed to run the middleware developed in the Parking Availability System GitHub repository.
+#
+# Usage:
+#	- No arguments: `bash pi_setup.sh`
+#		Performs the full setup routine, including restart
+#	- Arguments: `bash pi_setup.sh [eduroam_connect] [sys_pkg_update] [usb_wifi_driver] [rpi_settings_config] [make_python_venv]`
+#		Performs only the specified setup routine, restart must be manually done by user
 #
 # Resources:
 # - Very useful bash scripting guide: https://mywiki.wooledge.org/BashGuide
@@ -16,6 +22,10 @@
 
 REPO_NAME="parking-availability-system"
 LOCAL_PATH="$HOME/$REPO_NAME/Desktop/setup"
+num_args=$#
+args=$@
+
+
 
 # LMAO something went wrong. IDIOT! Now you die HAHA! (Please don't take this personally)
 # In all seriousness, if you reach this point, you need to rerun the script
@@ -26,11 +36,8 @@ die() {
 	exit 1
 }
 
-# Pre-reboot setup function
-setup_1() {
-	# Set current working directory
-	cd $LOCAL_PATH
-
+# Setup Routines
+eduroam_connect() {
 	###############################################
 	# Configure the Pi to connect to the UF network
 	###############################################
@@ -77,7 +84,9 @@ setup_1() {
 			die "ERROR: Failed to connect to 'eduroam' network. Killing script."
 		fi	 
 	fi
-	
+}
+
+sys_pkg_update() {
 	###############################################################
 	# Install dependencies and packages through APT package manager
 	###############################################################
@@ -101,8 +110,7 @@ setup_1() {
 	fi
 }
 
-# Post-reboot setup function
-setup_2() {
+usb_wifi_driver() {
 	####################################
 	# Configure USB wifi antenna adapter
 	####################################
@@ -152,7 +160,9 @@ setup_2() {
 	else
 		echo "Skipping USB WiFi antenna adapter configuration"
 	fi
-	
+}
+
+rpi_settings_config() {
 	###########################################################################################
 	# Configuring Raspberry Pi settings
 	# 1) Boot to console with password (removes GUI for better resources, password for security)
@@ -179,7 +189,9 @@ setup_2() {
 	then
 		sudo bash -c "echo "dtoverlay=disable-wifi" >> /boot/firmware/config.txt"
 	fi
+}
 
+make_python_venv() {
 	###################################################
 	# Creating virtual environment for Python libraries
 	###################################################
@@ -189,43 +201,68 @@ setup_2() {
   	python -m venv --system-site-packages car_detection
    	echo "Activating virtual environment . . ."
    	cd car_detection
-    	. bin/activate 
+    . bin/activate 
 	echo "Installing necessary packages to make inferences on camera feed . . ."
 	pip install opencv-python torchvision torch git+https://github.com/ultralytics/ultralytics.git@main 
+}
+
+# Pre-reboot setup function
+setup_1() {
+	eduroam_connect
+	sys_pkg_update
+}
+
+# Post-reboot setup function
+setup_2() {
+	usb_wifi_driver
+	rpi_settings_config
+	make_python_venv
 }
 
 main() {
 	echo
 	echo "Running Pi setup script . . . "
 
-	# Run setup function
-	if [ -f "$LOCAL_PATH/setup_checkpoint" ]
-	then
-		echo
-		read -p "A checkpoint from a previous setup session was detected. Would you like to continue? [Y/n]: " cont_response
-		if [[ $cont_response != "n" ]]
-		then
-			setup_2
-			echo
-			echo "Restarting device to complete setup . . . "
-			echo
-			sudo rm -f "$LOCAL_PATH/setup_checkpoint" 
-		else
-			sudo rm -f "$LOCAL_PATH/setup_checkpoint"
-			die "User chose to terminate setup script prior to completion"
-		fi
-	else
-		echo "This will require multiple restarts."
-		echo 
-		setup_1
-		echo
-		echo "Restarting device to apply updated packages. Please rerun the script when the device restarts to continue . . . "
-		echo
-		echo "$(date)" > $LOCAL_PATH/setup_checkpoint
-	fi
+	# Set current working directory
+	cd $LOCAL_PATH
 
-	# Restart for changes
-	sudo reboot
+	# Parse args
+	if [[ $num_args -eq 0 ]]
+	then
+		# Run setup function
+		if [ -f "$LOCAL_PATH/setup_checkpoint" ]
+		then
+			echo
+			read -p "A checkpoint from a previous setup session was detected. Would you like to continue? [Y/n]: " cont_response
+			if [[ $cont_response != "n" ]]
+			then
+				setup_2
+				echo
+				echo "Restarting device to complete setup . . . "
+				echo
+				sudo rm -f "$LOCAL_PATH/setup_checkpoint" 
+			else
+				sudo rm -f "$LOCAL_PATH/setup_checkpoint"
+				die "User chose to terminate setup script prior to completion"
+			fi
+		else
+			echo "This will require multiple restarts."
+			echo 
+			setup_1
+			echo
+			echo "Restarting device to apply updated packages. Please rerun the script when the device restarts to continue . . . "
+			echo
+			echo "$(date)" > $LOCAL_PATH/setup_checkpoint
+		fi
+
+		# Restart for changes
+		sudo reboot
+	else
+		# Execute each function given, if available
+		for i in ${!args[@]}; do
+			"${args[$i]}"
+		done
+	fi
 }
 
 main
