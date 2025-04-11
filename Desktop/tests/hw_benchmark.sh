@@ -15,13 +15,12 @@
 
 REPO_NAME="parking-availability-system"
 LOCAL_PATH="$HOME/$REPO_NAME/Desktop/tests"
-TEST_NAME="HW_TEST_$(date +%y%m%d%H%M%S)"
+START_TIME="$(date +%y%m%d%H%M%S)"
+TEST_NAME="HW_TEST_${START_TIME}"
 CSV_HEADER="TIME,TEMP,CORE_FREQ,CORE_VOLT,THROTTLE_STATE"
 
 end_benchmark() {
-    exit 0
-    # TODO: Implement python3 script to plot data
-    # python3 
+    python3 hw_plot.py "${LOCAL_PATH}/${TEST_NAME}/data.csv"
 }
 
 run_benchmark() {
