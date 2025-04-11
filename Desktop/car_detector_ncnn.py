@@ -28,6 +28,7 @@ def take_pic():
         picam2 = Picamera2()
         camera_config = picam2.create_still_configuration(main={'size': (1920, 1080)})
         picam2.configure(camera_config)
+        picam2.set_controls({"ExposureTime": 3500, "AnalogueGain": 100.0})
         try:
             picam2.start()
             camera_initialized = True
@@ -49,11 +50,11 @@ def take_pic():
 def updateServiceRoutine():
         global pi_configuration
         # this is grabbing the lot and updating the capacity
-        url = "http://ec2-3-143-172-128.us-east-2.compute.amazonaws.com:8080/getLot?id=\"c0cb52ad-ac20-41f7-b996-82d73ae31b73\""
+        url = "http://ec2-3-143-172-128.us-east-2.compute.amazonaws.com:8080/getLot?id=\"268f0b51-7e68-46fa-b6d5-1f7346a6012d\""
 
         payload = json.dumps({
-        "LotID": "44799a2c-d5ef-42bf-ad61-9f8b074b413e"
-        })
+                "LotID": "268f0b51-7e68-46fa-b6d5-1f7346a6012d"
+                })
         headers = {
         'Content-Type': 'application/json'
         }
@@ -89,7 +90,7 @@ def updateServiceRoutine():
         response = requests.request("PUT", url, headers=headers, data=payload)
         print(response)
 
-        return("c0cb52ad-ac20-41f7-b996-82d73ae31b73")
+        return("268f0b51-7e68-46fa-b6d5-1f7346a6012d")
 
 def getLot(idName):
         url = "http://ec2-3-143-172-128.us-east-2.compute.amazonaws.com:8080/getLot?id=" + idName
@@ -112,28 +113,32 @@ def main(argv):
         else:
                 global pi_configuration
                 pi_configuration = argv[0]
-        model = YOLO('LPR_detector.pt')
-        model.eval()
+        model = YOLO('LPR_detector.pt', "detect")
+        model.export(
+               format='ncnn'
+        )
+        model_ncnn = YOLO('./LPR_detector_ncnn_model')
+        # model_ncnn.eval()
         print("super awesome model loaded")
-
-        while (1):
+        running = True
+        while (running):
                 try:
                         # call take pic method to capture current frame of rpi
                         fileName = take_pic()
                         print("image taken")
-                        results = model(os.getenv('HOME')+'/parking-availability-system/Desktop/'+fileName)
-
+                        results = model_ncnn.predict(os.getenv('HOME')+'/parking-availability-system/Desktop/'+fileName)
                         for result in results:
-                                names = model.names
+                                names = model_ncnn.names
                                 detections = result.boxes
                                 print(result.boxes.data.shape[0])
                                 if result.boxes.data.shape[0] > 0:
                                         print("THERE IS A LICENSE PLATE!!!! UPDATE THE DATABASE!!!!")
+                                        result.save(filename='result'+fileName)
                                         # update the database
                                         updateServiceRoutine()
+                                        running = False
                                 else:
                                         print("This license plate is not bussin!")
-
                                 result.save(filename='result'+fileName)
                         #userResp = input("Would you like to continue? (True/False)")
                         #if (userResp == "False"):
