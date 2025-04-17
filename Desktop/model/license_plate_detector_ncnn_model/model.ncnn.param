@@ -110,7 +110,7 @@ Slice                    split_5                  1 3 128 129 130 131 -23300=3,3
 Split                    splitncnn_14             1 2 131 132 133
 Permute                  transpose_177            1 1 129 134 0=1
 MatMul                   matmul_175               2 1 134 130 135
-BinaryOp                 mul_6                    1 1 135 136 0=2 1=1 2=1.767770e-01
+BinaryOp                 mul_6                    1 1 135 136 0=2 1=1 2=1.767767e-01
 Softmax                  softmax_1                1 1 136 137 0=2 1=1
 MatMul                   matmultransb_0           2 1 133 137 138 0=1
 Reshape                  view_169                 1 1 138 139 0=20 1=20 2=128

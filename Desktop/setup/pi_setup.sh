@@ -98,7 +98,7 @@ sys_pkg_update() {
 	echo "Installing packages . . . " && \
 	sudo apt -y -o Acquire::ForceIPv4=true install python3-numpy python3-matplotlib python3-pandas jupyter-notebook && \
 	sudo apt -y -o Acquire::ForceIPv4=true install openconnect network-manager-openconnect-gnome && \
-	sudo apt -y -o Acquire::ForceIPv4=true install libcap-dev libcamera-dev && \
+	sudo apt -y -o Acquire::ForceIPv4=true install python3-libcamera libcap-dev libcamera-dev && \
 	echo && \
 	echo "Cleaning up . . . " && \
 	sudo apt -y -o Acquire::ForceIPv4=true autoremove
@@ -201,6 +201,7 @@ make_python_venv() {
    	cd car_detection
     . bin/activate 
 	echo "Installing necessary packages to make inferences on camera feed . . ."
+	pip install -r ../venv.txt
 	pip install opencv-python torchvision torch git+https://github.com/ultralytics/ultralytics.git@main 
 }
 

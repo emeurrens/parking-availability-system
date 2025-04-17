@@ -1,340 +1,335 @@
-import os
-import cv2
-import time
-import uuid
-import base64
-import json
-import logging
-import threading
-import requests
-import numpy as np
-from typing import Dict, List, Tuple, Optional
-from ultralytics import YOLO
-import shutil
-import subprocess
-import select
-from datetime import datetime
-from collections import deque
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-# Configure logging
+import os, cv2, time, base64, logging, threading, requests, numpy as np, shutil
+from typing import Dict, List, Tuple
+from collections import deque
+from concurrent.futures import ThreadPoolExecutor
+from ultralytics import YOLO
+from picamera2 import Picamera2
+from libcamera import controls
+import time
+import requests
+import json
+import sys 
+import time
+
+
+# ─── Logging ──────────────────────────────────────────────────────────────────
+LOG_LEVEL = logging.DEBUG          # ← change to INFO for less chatter
 logging.basicConfig(
-    level=logging.INFO,
+    level=LOG_LEVEL,
     format='%(asctime)s - %(levelname)s - [%(threadName)s] - %(message)s',
     datefmt='%H:%M:%S'
 )
 logger = logging.getLogger(__name__)
 
-# Configuration
+# ─── Configuration ───────────────────────────────────────────────────────────
 CONFIG = {
-    "vehicle_model_path": "./yolo11n_ncnn_model",  # NCNN model folder
-    "license_plate_model_path": "./license_plate_detector_ncnn_model",  # NCNN model folder
+    "vehicle_model_path": "./yolo11n_ncnn_model",
+    "license_plate_model_path": "./license_plate_detector_ncnn_model",
     "frames_dir": "./frames",
     "vehicle_classes": [2, 3, 5, 7],
-    "track_timeout": 5.0,
+    "track_timeout": 25.0,
     "api_endpoint": "https://e5v8r7gy4l.execute-api.us-east-2.amazonaws.com/processCar",
     "lot_id": "d65ef517-c64f-4c54-9dd0-706cd0d184ee",
-    "source": 0
+    "capture_sleep": 0.01
 }
 
-def iou(boxA, boxB):
-    """
-    Compute the Intersection over Union (IOU) of two boxes.
-    Box format: (x1, y1, x2, y2)
-    """
-    xA = max(boxA[0], boxB[0])
-    yA = max(boxA[1], boxB[1])
-    xB = min(boxA[2], boxB[2])
-    yB = min(boxA[3], boxB[3])
+fps_history: List[float] = []
 
-    interArea = max(0, xB - xA) * max(0, yB - yA)
-    boxAArea = (boxA[2] - boxA[0]) * (boxA[3] - boxA[1])
-    boxBArea = (boxB[2] - boxB[0]) * (boxB[3] - boxB[1])
-    if boxAArea == 0 or boxBArea == 0:
-        return 0.0
-    return interArea / float(boxAArea + boxBArea - interArea)
+pi_configuration = ""
 
+def decrement(value):
+    return value - 1
+
+def increment(value):
+   return value + 1
+
+def updateServiceRoutine():
+        global pi_configuration
+        # this is grabbing the lot and updating the capacity
+        url = "http://ec2-3-143-172-128.us-east-2.compute.amazonaws.com:8080/getLot?id=\"268f0b51-7e68-46fa-b6d5-1f7346a6012d\""
+
+        payload = json.dumps({
+                "LotID": "268f0b51-7e68-46fa-b6d5-1f7346a6012d"
+                })
+        headers = {
+        'Content-Type': 'application/json'
+        }
+
+        response = requests.request("GET", url, headers=headers, data=payload)
+
+        lot = response.json()
+        occupancyVal = 0
+        idName = ""
+
+        print("Before update: " + str(lot["occupancy"]))
+        # if pi_configuration == "in":
+        #         occupancyVal = increment(lot["occupancy"])
+        #         lot["occupancy"] = occupancyVal
+        # else:
+        #         occupancyVal = decrement(lot["occupancy"])
+        #         lot["occupancy"] = occupancyVal
+        # print("After update: " + str(lot["occupancy"]))
+
+        occupancyVal = increment(lot["occupancy"])
+        lot["occupancy"] = occupancyVal
+
+        # we need to change this so that database datatypes are the same!
+        lot["open"] = "07:30"
+        lot["close"] = "16:30"
+
+        # this is the update loop to add the new 
+        url = "http://ec2-3-143-172-128.us-east-2.compute.amazonaws.com:8080/updateLot"
+
+        payload = json.dumps(lot)
+        print(payload)
+        headers = {
+        'Content-Type': 'application/json'
+        }
+
+        response = requests.request("PUT", url, headers=headers, data=payload)
+        print(response)
+
+        return("268f0b51-7e68-46fa-b6d5-1f7346a6012d")
+
+def getLot(idName):
+        url = "http://ec2-3-143-172-128.us-east-2.compute.amazonaws.com:8080/getLot?id=" + idName
+
+        payload = json.dumps({
+        })
+
+        headers = {
+        'Content-Type': 'application/json'
+        }
+
+        response = requests.request("GET", url, headers=headers, data=payload)
+
+        print(response.text)
+
+def iou(a, b):
+    xA, yA = max(a[0], b[0]), max(a[1], b[1])
+    xB, yB = min(a[2], b[2]), min(a[3], b[3])
+    inter = max(0, xB - xA) * max(0, yB - yA)
+    areaA = (a[2]-a[0]) * (a[3]-a[1])
+    areaB = (b[2]-b[0]) * (b[3]-b[1])
+    return 0.0 if areaA == 0 or areaB == 0 else inter / (areaA + areaB - inter)
+
+# ─── Tracker ─────────────────────────────────────────────────────────────────
 class VehicleTracker:
-    def __init__(self, config: Dict):
-        self.config = config
-        os.makedirs(self.config["frames_dir"], exist_ok=True)
+    def __init__(self, cfg: Dict):
+        self.cfg = cfg
+        os.makedirs(self.cfg["frames_dir"], exist_ok=True)
 
-        logger.info("Loading vehicle detection model (NCNN)...")
-        self.vehicle_model = YOLO(self.config["vehicle_model_path"])
+        logger.info("Loading models…")
+        self.vehicle_model = YOLO(self.cfg["vehicle_model_path"])
+        self.plate_model   = YOLO(self.cfg["license_plate_model_path"])
 
-        logger.info("Loading license plate detection model (NCNN)...")
-        self.plate_model = YOLO(self.config["license_plate_model_path"])
+        self.active_tracks: Dict[int, Dict] = {}
+        self.next_tid = 1
 
-        # Track dictionary:
-        # track_id -> {
-        #   "bbox": (x1, y1, x2, y2),
-        #   "last_seen": float,
-        #   "first_seen": float,
-        #   "frame_count": int,
-        #   "dir": str
-        # }
-        self.active_tracks = {}
-        self.next_track_id = 1
-
-        self.shutdown_flag = threading.Event()
         self.frame_times = deque(maxlen=3000)
+        self.shutdown_flag = threading.Event()
+        self.executor = ThreadPoolExecutor(max_workers=2)
 
-    def start_capture(self):
-        width, height = 640, 480
-        self.frame_size = int(width * height * 1.5)
+        self.frame_id = 0  # global counter
 
-        command = [
-            "libcamera-vid",
-            "--width", str(width),
-            "--height", str(height),
-            "--codec", "yuv420",
-            "--framerate", "30",
-            "--nopreview",
-            "-t", "0",
-            "-o", "-"
-        ]
+        self._init_camera()
 
-        try:
-            self.process = subprocess.Popen(
-                command,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                bufsize=10**8
-            )
-            logger.info("Started libcamera-vid subprocess")
+    # ── camera ───────────────────────────────────────────────────────────────
+    def _init_camera(self):
+        self.picam2 = Picamera2()
+        cam_cfg = self.picam2.create_still_configuration(
+            main={
+                "size": self.picam2.camera_properties["PixelArraySize"],
+                "format": "RGB888",
+            },
+            controls={
+                "AwbMode": controls.AwbModeEnum.Indoor,
+                "AwbEnable": True,
+                "NoiseReductionMode": controls.draft.NoiseReductionModeEnum.Fast,
+                "Brightness": 0.23,
+                "Contrast": 1.2,
+                "Sharpness": 1.5,
+                "ExposureTime": 6000,
+                "AnalogueGain": 1.0,
+                "Saturation": 1.2,
+            },
+        )
+        self.picam2.align_configuration(cam_cfg)
+        self.picam2.configure(cam_cfg)
+        self.picam2.start()
+        logger.info("Picamera2 started")
 
-            def _log_stderr(proc):
-                for line in iter(proc.stderr.readline, b''):
-                    logger.warning(f"[libcamera-vid] {line.decode().strip()}")
+    # ── inference helpers ────────────────────────────────────────────────────
+    def infer_vehicle(self, img): return self.vehicle_model(img)[0].boxes
+    def infer_plate(self, img):   return self.plate_model(img)[0].boxes
 
-            threading.Thread(target=_log_stderr, args=(self.process,), daemon=True).start()
-            return True
-        except Exception as e:
-            logger.error(f"Failed to start libcamera-vid: {e}")
-            return False
-
-    def infer_vehicle(self, frame: np.ndarray):
-        """
-        Return the Boxes object for each detection from the vehicle model.
-        Typically you'll do: results = self.vehicle_model(frame) -> results[0].boxes
-        """
-        results = self.vehicle_model(frame)
-        # results is a list of 'Results' objects, usually length 1 for a single image
-        return results[0].boxes
-
-    def infer_plate(self, frame: np.ndarray):
-        """
-        Return the Boxes object for each detection from the plate model.
-        """
-        results = self.plate_model(frame)
-        return results[0].boxes
-
+    # ── main loop ────────────────────────────────────────────────────────────
     def run(self):
-        if not self.start_capture():
-            return
-
         try:
             while not self.shutdown_flag.is_set():
-                if self.process.poll() is not None:
-                    logger.error("libcamera-vid subprocess has exited unexpectedly")
-                    break
+                frame = self.picam2.capture_array()
+                # frame = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
+                self.frame_id += 1
+                logger.debug(f"[Frame {self.frame_id}] captured")
 
-                rlist, _, _ = select.select([self.process.stdout], [], [], 2.0)
-                if not rlist:
-                    logger.warning("Timeout waiting for camera frame")
-                    continue
-
-                raw_frame = self.process.stdout.read(self.frame_size)
-                if len(raw_frame) != self.frame_size:
-                    logger.warning("Incomplete frame received")
-                    continue
-
-                # Convert raw YUV420 to BGR
-                yuv = np.frombuffer(raw_frame, dtype=np.uint8).reshape((int(480 * 1.5), 640))
-                frame = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR_I420)
-
-                # Vehicle inference
-                start_time = time.time()
+                t0 = time.time()
                 boxes = self.infer_vehicle(frame)
-                inference_time = (time.time() - start_time) * 1000
+                ms = (time.time() - t0) * 1000
                 self.frame_times.append(time.time())
+                logger.info(f"[Frame {self.frame_id}] vehicle inference {ms:.1f} ms")
 
-                logger.info(f"Inference time: {inference_time:.2f} ms")
-                if len(self.frame_times) >= 2:
-                    elapsed = self.frame_times[-1] - self.frame_times[0]
-                    fps = len(self.frame_times) / elapsed
-                    logger.info(f"Approx. FPS: {fps:.2f}")
+                if len(self.frame_times) > 1:
+                    fps = len(self.frame_times) / (self.frame_times[-1] - self.frame_times[0])
+                    fps_history.append(fps)
+                    logger.debug(f"Rolling FPS ≈ {fps:.2f}")
 
-                # Filter for classes of interest
-                # 'boxes' is a Boxes object with shape (#detections, 6) typically
-                # we can access boxes.cls, boxes.xyxy, etc.
-                # We'll gather relevant detections in a list of (x1, y1, x2, y2, conf)
                 detections = []
-                if boxes is not None and len(boxes) > 0:
+                if boxes is not None and len(boxes):
                     for i in range(len(boxes)):
-                        cls_ = int(boxes.cls[i])
-                        if cls_ not in self.config["vehicle_classes"]:
+                        cls = int(boxes.cls[i])
+                        name = str(time.time())+".jpg"
+                        if cls not in self.cfg["vehicle_classes"]:
+                            cv2.imwrite(name, frame)
                             continue
-                        xyxy = boxes.xyxy[i].cpu().numpy().astype(int)
-                        conf = float(boxes.conf[i])
-                        x1, y1, x2, y2 = xyxy
-                        detections.append((x1, y1, x2, y2, conf))
+                        if boxes.data.shape[0] > 0:
+                            updateServiceRoutine()
+                        x1, y1, x2, y2 = boxes.xyxy[i].cpu().numpy().astype(int)
+                        detections.append((x1, y1, x2, y2))
+                        carResults = self.vehicle_model(frame)
+                        # lazy but just want to see the bounding boxes
+                        for result in carResults:
+                                detections = result.boxes
+                                name = str(time.time())+".jpg"
+                                if result.boxes.data.shape[0] > 0:
+                                        result.save(filename='result'+name)
 
-                # Update tracks
-                self._update_tracks(detections, frame)
+                        # jank method for ending licens eplate detections
+                        plateResults = self.plate_model(frame)
+                        for plateResult in plateResults:
+                            detections = plateResult.boxes
+                            name = str(time.time())+".jpg"
+                            if plateResult.boxes.data.shape[0] > 0:
+                                plateResult.save(filename='plate'+name)
+                                break
+                        time.sleep(2) 
+                        break # this is purely for ending
+                logger.debug(f"[Frame {self.frame_id}] detections kept: {len(detections)}")
 
-                # Check for stale tracks
-                self._finalize_stale_tracks()
+                self._update_tracks(detections, frame, self.frame_id)
+                self._dispatch_stale_tracks()
+
+                time.sleep(self.cfg["capture_sleep"])
 
         except KeyboardInterrupt:
             logger.info("Interrupted by user")
         finally:
             self.shutdown()
 
-    def _update_tracks(self, detections: List[Tuple[int, int, int, int, float]], frame: np.ndarray):
-        current_time = time.time()
-        updated_track_ids = set()
+    # ── tracking ────────────────────────────────────────────────────────────
+    def _update_tracks(self, dets: List[Tuple[int,int,int,int]], frame, fid: int):
+        logger.debug(f"[Frame {fid}] updating tracks")
+        now = time.time()
+        for (x1,y1,x2,y2) in dets:
+            best_tid, best_iou = None, 0.0
+            for tid, td in self.active_tracks.items():
+                v = iou((x1,y1,x2,y2), td["bbox"])
+                if v > best_iou:
+                    best_tid, best_iou = tid, v
 
-        # Try to match each detection to an existing track by best IOU
-        for (x1, y1, x2, y2, conf) in detections:
-            best_track_id = None
-            best_iou = 0.0
-            for track_id, track_data in self.active_tracks.items():
-                iou_val = iou((x1, y1, x2, y2), track_data["bbox"])
-                if iou_val > best_iou:
-                    best_iou = iou_val
-                    best_track_id = track_id
-
-            # If high enough IOU, update that track
-            if best_iou > 0.2 and best_track_id is not None:
-                track_data = self.active_tracks[best_track_id]
-                track_data["bbox"] = (x1, y1, x2, y2)
-                track_data["last_seen"] = current_time
-                track_data["frame_count"] += 1
-
-                # Save frame
-                frame_filename = f"frame_{track_data['frame_count']:04d}.jpg"
-                frame_path = os.path.join(track_data["dir"], frame_filename)
-                cv2.imwrite(frame_path, frame)
-
-                updated_track_ids.add(best_track_id)
+            if best_iou > 0.2 and best_tid:
+                td = self.active_tracks[best_tid]
+                td["bbox"] = (x1,y1,x2,y2)
+                td["last_seen"] = now
+                logger.debug(f"[Frame {fid}] updated track {best_tid} (IOU={best_iou:.2f})")
+                self._save_frame(frame, best_tid, fid)
             else:
-                # Create new track
-                new_track_id = self.next_track_id
-                self.next_track_id += 1
-
-                track_dir = os.path.join(self.config["frames_dir"], str(new_track_id))
-                os.makedirs(track_dir, exist_ok=True)
-
-                frame_filename = "frame_0001.jpg"
-                frame_path = os.path.join(track_dir, frame_filename)
-                cv2.imwrite(frame_path, frame)
-
-                self.active_tracks[new_track_id] = {
-                    "bbox": (x1, y1, x2, y2),
-                    "last_seen": current_time,
-                    "first_seen": current_time,
-                    "frame_count": 1,
-                    "dir": track_dir
+                tid = self.next_tid; self.next_tid += 1
+                tdir = os.path.join(self.cfg["frames_dir"], str(tid))
+                os.makedirs(tdir, exist_ok=True)
+                self.active_tracks[tid] = {
+                    "bbox": (x1,y1,x2,y2),
+                    "last_seen": now,
+                    "dir": tdir,
                 }
+                logger.info(f"[Frame {fid}] created new track {tid}")
+                self._save_frame(frame, tid, fid)
 
-                updated_track_ids.add(new_track_id)
+    def _save_frame(self, frame, tid: int, fid: int):
+        path = os.path.join(self.cfg["frames_dir"], str(tid), f"{fid}.jpg")
+        cv2.imwrite(path, frame)
+        logger.debug(f"[Frame {fid}] saved to {path}")
 
-        # Tracks not updated remain unchanged; we'll finalize them if they're stale.
+    # ── stale track handling (threaded) ───────────────────────────────────────
+    def _dispatch_stale_tracks(self):
+        now = time.time()
+        stale = [tid for tid,td in self.active_tracks.items()
+                 if now - td["last_seen"] > self.cfg["track_timeout"]]
+        for tid in stale:
+            td = self.active_tracks.pop(tid)
+            logger.info(f"Track {tid} stale → submit finalisation")
+            self.executor.submit(self._finalise_track, tid, td)
 
-    def _finalize_stale_tracks(self):
-        """
-        Check each active track. If it hasn't been updated for more than 'track_timeout',
-        finalize the track (license-plate inference, send best frame, remove folder).
-        """
-        current_time = time.time()
-        stale_ids = []
-        for track_id, track_data in self.active_tracks.items():
-            if (current_time - track_data["last_seen"]) > self.config["track_timeout"]:
-                stale_ids.append(track_id)
+    def _finalise_track(self, tid: int, td: Dict):
+        logger.info(f"[T{tid}] finalisation started")
+        imgs = sorted(os.listdir(td["dir"]), key=lambda f:int(os.path.splitext(f)[0]))
+        logger.debug(f"[T{tid}] {len(imgs)} cached frames to inspect")
 
-        for tid in stale_ids:
-            track_data = self.active_tracks[tid]
-            self._finalize_track(tid, track_data)
-            del self.active_tracks[tid]
-
-    def _finalize_track(self, track_id: int, track_data: Dict):
-        """
-        Once a track times out, scan all frames, find the highest-confidence plate,
-        send that frame to the API, then remove the folder.
-        """
-        track_dir = track_data["dir"]
-        frame_files = sorted([
-            f for f in os.listdir(track_dir)
-            if f.lower().endswith((".jpg", ".png"))
-        ])
-        if not frame_files:
-            logger.warning(f"No frames found for track {track_id}, removing folder.")
-            shutil.rmtree(track_dir, ignore_errors=True)
-            return
-
-        best_conf = 0.0
-        best_frame_path = None
-
-        for f_name in frame_files:
-            frame_path = os.path.join(track_dir, f_name)
-            frame = cv2.imread(frame_path)
-            if frame is None:
+        best_conf, best_path = 0.0, None
+        for fn in imgs:
+            p = os.path.join(td["dir"], fn)
+            img = cv2.imread(p)
+            plates = self.infer_plate(img)
+            if plates is None or len(plates) == 0:
+                logger.debug(f"[T{tid}] {fn}: no plate")
                 continue
+            conf = float(plates.conf.max().item())
+            logger.debug(f"[T{tid}] {fn}: max plate conf {conf:.3f}")
+            if conf > best_conf:
+                best_conf, best_path = conf, p
+                logger.debug(f"[T{tid}] best frame updated → {fn}")
 
-            plate_boxes = self.infer_plate(frame)  # This should be a 'Boxes' object
-            if plate_boxes is None or len(plate_boxes) == 0:
-                continue  # No plates found in this frame
-
-            # plate_boxes.conf is a tensor of confidences for each plate
-            # We'll check the max confidence in this set of plates
-            frame_conf = float(plate_boxes.conf.max().item())
-            if frame_conf > best_conf:
-                best_conf = frame_conf
-                best_frame_path = frame_path
-
-        if best_frame_path is not None:
-            # Send to API
-            self._send_to_api(best_frame_path, track_id)
+        if best_path:
+            logger.info(f"[T{tid}] best frame {os.path.basename(best_path)} conf={best_conf:.3f}")
+            self._send_to_api(best_path, tid)
         else:
-            logger.info(f"No license plate detected for track {track_id}.")
+            logger.info(f"[T{tid}] no plate detected in any frame")
 
-        # Clean up
-        shutil.rmtree(track_dir, ignore_errors=True)
+        shutil.rmtree(td["dir"], ignore_errors=True)
+        logger.debug(f"[T{tid}] cache folder removed")
 
-    def _send_to_api(self, frame_path: str, track_id: int):
+    # ── API ──────────────────────────────────────────────────────────────────
+    def _send_to_api(self, img_path, tid):
         try:
-            with open(frame_path, "rb") as f:
-                image_data = base64.b64encode(f.read()).decode("utf-8")
-
-            payload = {
-                "lot_id": self.config["lot_id"],
-                "image": image_data
-            }
-
-            logger.info(f"Sending frame of track {track_id} to API...")
-            response = requests.post(
-                self.config["api_endpoint"],
-                json=payload,
-                headers={"Content-Type": "application/json"}
-            )
-
-            if response.status_code == 200:
-                logger.info(f"Successfully sent data for track {track_id}")
+            with open(img_path,"rb") as f:
+                data = f.read()
+            b64 = base64.b64encode(data).decode()
+            logger.info(f"[T{tid}] uploading {os.path.basename(img_path)} ({len(data)/1024:.1f} KB)")
+            r = requests.post(self.cfg["api_endpoint"],
+                              json={"lot_id": self.cfg["lot_id"], "image": b64},
+                              headers={"Content-Type":"application/json"})
+            if r.status_code == 200:
+                logger.info(f"[T{tid}] upload OK")
             else:
-                logger.error(f"Failed to send data: {response.status_code} - {response.text}")
+                logger.error(f"[T{tid}] upload failed {r.status_code}: {r.text}")
         except Exception as e:
-            logger.error(f"API error for track {track_id}: {str(e)}")
+            logger.error(f"[T{tid}] API exception: {e}")
 
+    # ── shutdown ────────────────────────────────────────────────────────────
     def shutdown(self):
         self.shutdown_flag.set()
-        if hasattr(self, "process") and self.process:
-            self.process.terminate()
-            self.process.wait()
-        #cv2.destroyAllWindows()        
+        self.executor.shutdown(wait=True)
+        self.picam2.stop(); self.picam2.close()
+        if fps_history:
+            print(f"Max FPS: {max(fps_history):.2f}")
+            print(f"Min FPS: {min(fps_history):.2f}")
+        logger.info("Shutdown complete")
 
+# ─── entry point ─────────────────────────────────────────────────────────────
 def main():
-    tracker = VehicleTracker(CONFIG)
-    tracker.run()
+    VehicleTracker(CONFIG).run()
 
 if __name__ == "__main__":
     main()

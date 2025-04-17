@@ -1,10 +1,8 @@
-import os                             
-import sys                                 
+import os, sys, time, requests, json                             
 from picamera2 import Picamera2, Preview
 from libcamera import controls
-import time
-import requests
-import json
+from typing import Dict,List
+import numpy as np
 
 from ultralytics import YOLO
 
@@ -26,9 +24,32 @@ def take_pic():
     # camera has not been initialized so it must be
     if not camera_initialized: 
         picam2 = Picamera2()
-        camera_config = picam2.create_still_configuration(main={'size': (1920, 1080)})
+        camera_config = picam2.create_still_configuration(
+               main={
+                      'size': picam2.camera_properties['PixelArraySize'],
+                      'format': 'RGB888',
+                },
+                controls={
+                        #'AeConstraintMode': controls.AeConstraintModeEnum.Highlight,
+                        #'AeExposureMode': controls.AeExposureModeEnum.Short,
+                        #'ExposureValue': -1.0,
+                        #'AeEnable': True,
+                        'AwbMode': controls.AwbModeEnum.Indoor,
+                        'AwbEnable': True,
+                        'NoiseReductionMode': controls.draft.NoiseReductionModeEnum.Fast,
+                        'Brightness': 0.23,
+                        'Contrast': 1.2,
+                        'Sharpness': 1.5,
+                        'ExposureTime': 6000, 
+                        'AnalogueGain': 1.0,
+                        'Saturation': 1.2
+                },
+        )
+        picam2.align_configuration(camera_config)
         picam2.configure(camera_config)
-        picam2.set_controls({"ExposureTime": 3500, "AnalogueGain": 100.0})
+        print(picam2.camera_controls)
+        print(camera_config)
+
         try:
             picam2.start()
             camera_initialized = True
@@ -41,11 +62,10 @@ def take_pic():
         name = str(time.time())+".jpg"
         picam2.capture_file(name)
         print("Image captured successfully")
-        time.sleep(1)
+        #time.sleep(1)
     except Exception as e:
         print(f"Error capturing image: {e}")
     return name
-
 
 def updateServiceRoutine():
         global pi_configuration
@@ -118,28 +138,42 @@ def main(argv):
                format='ncnn'
         )
         model_ncnn = YOLO('./LPR_detector_ncnn_model')
-        # model_ncnn.eval()
         print("super awesome model loaded")
+        
         running = True
+
+        active_track: Dict[int, List] = {}
         while (running):
                 try:
                         # call take pic method to capture current frame of rpi
                         fileName = take_pic()
                         print("image taken")
-                        results = model_ncnn.predict(os.getenv('HOME')+'/parking-availability-system/Desktop/'+fileName)
+                        results = model_ncnn.track(os.getenv('HOME')+'/parking-availability-system/Desktop/'+fileName, persist=True)
                         for result in results:
                                 names = model_ncnn.names
                                 detections = result.boxes
-                                print(result.boxes.data.shape[0])
                                 if result.boxes.data.shape[0] > 0:
                                         print("THERE IS A LICENSE PLATE!!!! UPDATE THE DATABASE!!!!")
-                                        result.save(filename='result'+fileName)
-                                        # update the database
-                                        updateServiceRoutine()
-                                        running = False
+                                        for box in result.boxes:
+                                                if not (box.id in active_track.keys()):         # Doesn't work not enough time to fix
+                                                        updateServiceRoutine()
+                                                        result.save(filename='result'+fileName)
+                                                        # update the database
+                                                        file = open("DB_Com_Times.txt", "a")
+                                                        inference_start = time.time()
+                                                        file.write(str(time.time() - inference_start) + "\n")
+                                                        print(str(time.time() - inference_start) + "\n")
+                                                        file.close()
+                                                active_track[box.id].append(box)
+                                                time.sleep(2)
+                                                        
+                                        running = True
                                 else:
                                         print("This license plate is not bussin!")
-                                result.save(filename='result'+fileName)
+                                        if len(active_track.keys()) > 0:
+                                                for tid in active_track.keys():
+                                                       active_track.clear()              
+                                        result.save(filename='result'+fileName)
                         #userResp = input("Would you like to continue? (True/False)")
                         #if (userResp == "False"):
                                 #break
